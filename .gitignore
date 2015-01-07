@@ -1,0 +1,6 @@
+.depend
+*.o
+snake-client
+snake-server
+*~
+nbproject/private
