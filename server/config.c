@@ -59,6 +59,7 @@ static void get_key(const char *group, const char *key, unsigned char *field,
 		if ((min == 0 && max == 0) || (i >= min && i <= max)) {
 			debugf("Setting %s.%s to %d\n", group, key, i);
 			*field = (unsigned char) i;
+			return;
 		}
 
 		infof("Wrong %s field in file server.ini!", key);
@@ -96,11 +97,13 @@ void parse_config()
 
 	if ((cptmp = g_key_file_get_string(key_file, "server",
 		"SERVER_IP", NULL)) != NULL) {
+		debugf("Setting server.SERVER_IP to %s\n", cptmp);
 		server_config.server_ip = cptmp;
 	}
 
 	if ((itmp = g_key_file_get_integer(key_file, "server",
 		"SERVER_PORT", NULL)) != 0) {
+		debugf("Setting server.SERVER_PORT to %d\n", itmp);
 		server_config.port_no = itmp;
 	}
 
