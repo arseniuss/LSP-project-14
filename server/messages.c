@@ -1,8 +1,9 @@
 /*
- * File:   main.c
- * Author: Armands Skolmeisters
+ * File:   messages.c
+ * Author: Ilze Dzene-Vanaga
+ *	   Armands Skolmeisters
  *
- * Server message parsing
+ * Server message creation
  */
 
 #include <string.h>
@@ -14,19 +15,55 @@
 
 #include "Server.h"
 
-const char *no_message = "a\0n\0";
-
-size_t create_yes_message(char *buffer, unsigned char id)
+void parse_message(size_t len, char *msg)
 {
-	size_t i, len;
+	size_t i;
+	for (i = 0; i < len; ++i)
+	{
+		if (msg[i] == '\r')
+		{
+			msg[i] = '\0';
+		}
+	}
+}
 
-	len = sprintf(buffer, "a\ry\r%c\r%d\r%d", id, game_config.field_width,
+size_t create_yes_message(char *msg, unsigned char id)
+{
+	size_t len;
+
+	len = sprintf(msg, "a\ry\r%c\r%d\r%d", id, game_config.field_width,
 		game_config.field_height);
 
-	for (i = 0; i < len; ++i) {
-		if (buffer[i] == '\r')
-			buffer[i] = '\0';
-	}
+	parse_message(len, msg);
+
+	return len;
+}
+
+size_t create_no_message(char *msg)
+{
+	size_t len;
+
+	len = sprintf(msg, "a\rn");
+
+	return len;
+}
+
+size_t create_end_message(char *msg, unsigned char id)
+{
+	size_t len;
+
+	len = sprintf(msg, "e\r%c", id);
+
+	parse_message(len, msg);
+
+	return len;
+}
+
+size_t create_dead_message(char *msg)
+{
+	size_t len;
+
+	len = sprintf(msg, "d");
 
 	return len;
 }
