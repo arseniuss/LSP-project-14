@@ -10,6 +10,8 @@
 #define MAX_PLAYER_COUNT		4
 #define MAX_MESSAGE_SIZE		256
 #define MAX_USERNAME_LEN		15
+#define MAX_GAME_WIDTH			120
+#define MAX_GAME_HEIGHT			80
 
 #define DEFAULT_GAME_WIDTH		80
 #define DEFAULT_GAME_HEIGHT		20
@@ -25,4 +27,3 @@
 #define DEFAULT_SERVER_PORT_NO		65342
 
 #endif	/* DEFAULTS_H */
-
