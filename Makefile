@@ -19,6 +19,7 @@ endif
 
 # Linker flags
 LDFLAGS = \
+    -pthread \
     $(shell pkg-config --libs glib-2.0)
 
 COMMON_SRC = \
@@ -34,7 +35,8 @@ SERVER_SRC = \
     server/config.c \
     server/main.c   \
     server/messages.c \
-    server/states.c
+    server/states.c \
+    server/listener.c
 
 CLIENT_OBJS = $(CLIENT_SRC:.c=.o) $(COMMON_SRC:.c=.o)
 SERVER_OBJS = $(SERVER_SRC:.c=.o) $(COMMON_SRC:.c=.o)
