@@ -37,7 +37,7 @@ struct Player {
 
 	unsigned char id;
 	char username[MAX_USERNAME_LEN];
+	int state; //0 - left, 1 - active, 2 - dead
 };
 
 #endif	/* STRUCTURES_H */
-
