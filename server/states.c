@@ -17,100 +17,63 @@
 #include "../common/Defaults.h"
 #include "Server.h"
 
-enum GameStates {
-	STATE_INITIAL = 0,
-	STATE_GAME,
-};
-int game_state;
-int listener;
+struct Point snakes[MAX_PLAYER_COUNT][DEFAULT_SCORE_LIMIT + 3];
+char field[MAX_GAME_HEIGHT][MAX_GAME_WIDTH];
 
-struct Player players[MAX_PLAYER_COUNT];
-
-char send_buffer[MAX_MESSAGE_SIZE];
-
-void handle_register_message(const char *msg, struct sockaddr_in *addr)
+void start_game()
 {
-	int i;
-
-	if (msg[0] != 'r' && msg[1] != '\0') {
-		debugf("Wrong REGISTER message format!\n");
-		return;
+	if (players[0].state == 1)
+	{
+		snakes[0][0].x = 0;
+		snakes[0][0].y = 2;
+		snakes[0][1].x = 0;
+		snakes[0][1].y = 1;
+		snakes[0][2].x = 0;
+		snakes[0][2].y = 0; 
 	}
-
-	if (game_state != STATE_INITIAL) {
-		debugf("Cannot REGISTER: game is already started\n");
-		goto send_no_msg;
+	if (players[1].state == 1)
+	{
+		snakes[1][0].x = 2;
+		snakes[1][0].y = game_config.field_width - 1;
+		snakes[1][1].x = 1;
+		snakes[1][1].y = game_config.field_width - 1;
+		snakes[1][2].x = 0;
+		snakes[1][2].y = game_config.field_width - 1; 
 	}
-
-	for (i = 0; i < server_config.max_players; ++i) {
-		if (!strcmp(players[i].username, &msg[2])) {
-			debugf("User '%s' already exists!\n", players[i].username);
-			goto send_no_msg;
-		}
+	if (players[2].state == 1)
+	{
+		snakes[1][0].x = game_config.field_height - 1;
+		snakes[1][0].y = game_config.field_width - 3;
+		snakes[1][1].x = game_config.field_height - 1;
+		snakes[1][1].y = game_config.field_width - 2;
+		snakes[1][2].x = game_config.field_height - 1;
+		snakes[1][2].y = game_config.field_width - 1; 
 	}
-
-	for (i = 0; i < server_config.max_players; ++i) {
-		if (players[i].username[0] == '\0') {
-			players[i].id = random_player_id();
-			memcpy(&players[i].addr, addr, sizeof(*addr));
-			strncpy(players[i].username, &msg[2], MAX_USERNAME_LEN);
-
-			infof("User '%s' from %s saved as player no. %d with ID '%c'",
-				players[i].username, inet_ntoa(players[i].addr.sin_addr),
-				0, players[i].id);
-
-			i = create_yes_message(send_buffer, players[i].id);
-			sendto(listener, send_buffer, i, 0,
-				(struct sockaddr *) addr, sizeof(*addr));
-
-			return;
-		}
+	if (players[3].state == 1)
+	{
+		snakes[1][0].x = game_config.field_height - 3;
+		snakes[1][0].y = 0;
+		snakes[1][1].x = game_config.field_height - 2;
+		snakes[1][1].y = 0;
+		snakes[1][2].x = game_config.field_height - 1;
+		snakes[1][2].y = 0; 
 	}
-
-send_no_msg:
-	sendto(listener, no_message, no_message_len, 0,
-		(struct sockaddr *) addr, sizeof(*addr));
 }
 
-void handle_message(const char *msg, size_t len, struct sockaddr_in *addr)
+void remove_player(int i)
 {
-	int i;
+	players[i].state = 0;	
+	infof("remove player\n");
+}
 
-	if (len <= 0)
-		return;
+void player_move(int i, unsigned char m)
+{
+	infof("player move: %c\n", m);
+}
 
-#ifdef DEBUG
-	debugf("Message (%ld): ", len);
-	for (i = 0; i < len; ++i) {
-		if (msg[i] == '\0')
-			printf("\\0");
-		else
-			putchar(msg[i]);
-	}
-	printf("\n");
-#endif
-
-	switch (msg[0]) {
-	case 'r':
-		handle_register_message(msg, addr);
-		break;
-	case 's':
-		for (i = 0; i < server_config.max_players; ++i) {
-			if (players[i].addr.sin_addr.s_addr != addr->sin_addr.s_addr)
-				continue;
-			/* TODO: Extension to protocol */
-			if (len > 2) {
-				if (strcmp(players[i].username, &msg[2]))
-					continue;
-			}
-			if (game_state == STATE_INITIAL) {
-				infof("Game started!");
-				game_state = STATE_GAME;
-			}
-			break;
-		}
-		break;
-	}
+void move_all()
+{
+	
 }
 
 void send_messages()
@@ -121,47 +84,24 @@ void send_messages()
 	}
 }
 
-int main_loop()
+size_t create_state_message(char *msg)
 {
-	int nbytes;
-	struct sockaddr_in serv_addr;
-	struct sockaddr_in cli_addr;
-	socklen_t addrlen;
-	char msg[MAX_MESSAGE_SIZE];
+		
 
-	bzero(&players, sizeof(players));
 
-	listener = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	if (listener < 0)
-		error("Error while opening socket");
+	size_t len;
 
-	bzero((char *) &serv_addr, sizeof(serv_addr));
-	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	serv_addr.sin_port = htons(server_config.port_no);
+	len = sprintf(msg, "d");
 
-	if (bind(listener, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-		error("ERRROR on binding");
-	}
-
-	addrlen = sizeof(cli_addr);
-
-	game_state = STATE_INITIAL;
-
-	infof("Waiting for incoming players");
-
-	while (1) {
-		if ((nbytes = recvfrom(listener, msg, MAX_MESSAGE_SIZE,
-			MSG_DONTWAIT, (struct sockaddr *) &cli_addr,
-			&addrlen)) > 0) {
-
-			handle_message(msg, nbytes, &cli_addr);
-		}
-
-		send_messages();
-	}
-
-	close(listener);
-
-	return 0;
+	return len;
 }
+
+int get_snake_as_string(int i)
+{
+	
+}
+
+
+
+
+
