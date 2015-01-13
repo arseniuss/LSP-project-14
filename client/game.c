@@ -25,7 +25,7 @@ char msg[MAX_MESSAGE_SIZE];
 size_t msg_len;
 ssize_t resp_len;
 
-struct Snake snake[MAX_PLAYER_COUNT];
+struct ClientSnake snake[MAX_PLAYER_COUNT];
 int snake_count = 0;
 struct Point food[MAX_FOOD_AMOUNT];
 

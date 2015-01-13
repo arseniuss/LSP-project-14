@@ -56,8 +56,6 @@
           <executablePath></executablePath>
         </makeTool>
       </makefileType>
-      <item path="client/Client.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="client/config.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="client/game.c" ex="false" tool="0" flavor2="0">
@@ -68,21 +66,31 @@
       </item>
       <item path="client/messages.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="common/Defaults.h" ex="false" tool="3" flavor2="0">
+      <item path="common/errors.c" ex="false" tool="0" flavor2="2">
       </item>
-      <item path="common/Defs.h" ex="false" tool="3" flavor2="0">
+      <item path="common/messages.c" ex="false" tool="0" flavor2="2">
       </item>
-      <item path="common/Messages.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="common/Structures.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="common/errors.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="common/messages.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="server/Server.h" ex="false" tool="3" flavor2="0">
-      </item>
+      <folder path="0/client">
+        <cTool>
+          <incDir>
+            <pElem>/usr/include/glib-2.0</pElem>
+            <pElem>/usr/lib/x86_64-linux-gnu/glib-2.0/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </folder>
+      <folder path="0/server">
+        <cTool>
+          <incDir>
+            <pElem>/usr/include/glib-2.0</pElem>
+            <pElem>/usr/lib/x86_64-linux-gnu/glib-2.0/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </folder>
       <item path="server/config.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="server/listener.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="server/main.c" ex="false" tool="0" flavor2="0">
       </item>

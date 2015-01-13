@@ -5,12 +5,12 @@
 
 extern struct Client client_config;
 
-struct Snake {
+struct ClientSnake {
 	int len;
 	unsigned char id;
 	struct Point points[MAX_SNAKE_LENGTH];
 };
-extern struct Snake snake[MAX_PLAYER_COUNT];
+extern struct ClientSnake snake[MAX_PLAYER_COUNT];
 extern int snake_count;
 extern struct Point food[MAX_FOOD_AMOUNT];
 
