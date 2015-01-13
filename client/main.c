@@ -98,7 +98,8 @@ int main(int argc, char** argv)
 	parse_config();
 	show_title();
 	input_username();
-	connect_to_server();
+	if (connect_to_server())
+		game_loop();
 
 	return 0;
 }

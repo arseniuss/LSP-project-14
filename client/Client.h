@@ -15,7 +15,8 @@ extern int snake_count;
 extern struct Point food[MAX_FOOD_AMOUNT];
 
 void parse_config();
-void connect_to_server();
+int connect_to_server();
+void game_loop();
 
 /* Messages */
 size_t create_register_message(char *msg, const char *username);

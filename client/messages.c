@@ -109,6 +109,7 @@ void decode_state_message(const char *msg, ssize_t len)
 				break;
 			}
 		}
+		snake[i].len = j - 1;
 		ptr++;
 	}
 
@@ -119,6 +120,8 @@ void decode_state_message(const char *msg, ssize_t len)
 
 	/* Save global snake_count */
 	snake_count = snake_cnt;
+
+	debugf("Decoded STATE message\n");
 }
 
 void decode_message(const char *msg, ssize_t len)

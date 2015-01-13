@@ -14,6 +14,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <termios.h>
 
 #include "Client.h"
 #include "../common/Defs.h"
@@ -29,9 +30,9 @@ struct ClientSnake snake[MAX_PLAYER_COUNT];
 int snake_count = 0;
 struct Point food[MAX_FOOD_AMOUNT];
 
-void connect_to_server()
+int connect_to_server()
 {
-	int tries, resp;
+	int tries, resp, ret;
 	socklen_t slen = sizeof(client_config.addr);
 
 	printf("Savienojas ar serveri %s:%d ", client_config.server_ip,
@@ -94,13 +95,21 @@ void connect_to_server()
 
 	if (resp == 0) {
 		printf(" aizņemts!");
+		ret = 0;
 	} else {
 		printf(" pieslēdzies!");
+		ret = 1;
 	}
+
+	fflush(stdout);
+
+	return ret;
 }
 
 void send_player_input(int input)
 {
+	socklen_t slen = sizeof(client_config.addr);
+
 	switch (input) {
 	case 'w':
 	case 'd':
@@ -111,16 +120,23 @@ void send_player_input(int input)
 	case 'D':
 	case 'A':
 	case 'S':
-		create_move_message(msg, input, client_config.id);
+		msg_len = create_move_message(msg, input, client_config.id);
 		break;
 	case 'b':
 	case 'B':
-		create_start_message(msg, client_config.id);
+		msg_len = create_start_message(msg, client_config.id);
 		break;
 	case 'q':
 	case 'Q':
-		create_leave_message(msg, client_config.id);
+		msg_len = create_leave_message(msg, client_config.id);
 		break;
+	default:
+		return;
+	}
+
+	if (sendto(sender, msg, msg_len, 0, (struct sockaddr *) &client_config.addr,
+		slen) == -1) {
+		error("Error while sending user input message");
 	}
 }
 
@@ -128,19 +144,30 @@ void game_draw()
 {
 	int i, j;
 
-	for (i = 0; i < client_config.height; ++i)
-		for (j = 0; j < client_config.width; ++j) {
+	bash_clear_screen();
+	bash_position_cursor(0, 0);
+	for (i = 0; i < snake_count; ++i) {
+		/* TODO: There is only 8 colors */
+		bash_set_color(background[i]);
 
+		for (j = 0; j < snake[i].len; ++j) {
+			bash_position_cursor(snake[i].points[j].x, snake[i].points[j].y);
+			putchar(' ');
 		}
+	}
 }
 
 void game_loop()
 {
 	int player_input;
 	socklen_t slen = sizeof(client_config.addr);
+	struct termios ttystate;
 
-	/* Set input to nonblock so we gan process everthing else */
-	fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
+	tcgetattr(STDIN_FILENO, &ttystate);
+	ttystate.c_lflag &= ~(ICANON | ECHO);
+	ttystate.c_cc[VMIN] = 0;
+	ttystate.c_cc[VTIME] = 0;
+	tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
 
 	bash_set_window_size(client_config.width, client_config.height);
 
@@ -156,6 +183,8 @@ void game_loop()
 		}
 
 		if ((player_input = fgetc(stdin)) != EOF) {
+			debugf("Sending player input %c\n", player_input);
+
 			send_player_input(player_input);
 
 			switch (player_input) {
@@ -164,6 +193,12 @@ void game_loop()
 				client_config.state = PLAYER_STATE_LEFT;
 				break;
 			}
+
 		}
+
+		game_draw();
 	} while (client_config.state == PLAYER_STATE_ACTIVE);
+
+	ttystate.c_lflag |= ICANON | ECHO;
+	tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
 }
