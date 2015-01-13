@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 #include "Client.h"
 #include "../common/Defs.h"
@@ -91,6 +92,9 @@ void decode_state_message(const char *msg, ssize_t len)
 		snake[i].points[0].x = *ptr++;
 		snake[i].points[0].y = *ptr++;
 
+		debugf("Snake no. %d start at %d %d\n", i,
+			snake[i].points[0].x, snake[i].points[0].y);
+
 #ifdef DEBUG
 		if (snake[i].points[0].x > client_config.width ||
 			snake[i].points[0].x > client_config.height)
@@ -116,7 +120,7 @@ void decode_state_message(const char *msg, ssize_t len)
 				snake[i].points[j].y = snake[i].points[j - 1].y;
 				break;
 			default:
-				debugf("Error in snake coordinates! Got char %c", *ptr);
+				debugf("Error in snake coordinates! Got char %c\n", *ptr);
 				return;
 			}
 
@@ -140,6 +144,20 @@ void decode_state_message(const char *msg, ssize_t len)
 
 void decode_message(const char *msg, ssize_t len)
 {
+#ifdef DEBUG
+	int d;
+
+	debugf("Got message: ");
+	for (d = 0; d < len; ++d)
+		if (msg[d] == 0)
+			printf("\\0|");
+		else if (!isgraph(msg[d]))
+			printf("%d|", msg[d]);
+		else
+			printf("%c|", msg[d]);
+	printf("\n");
+#endif
+
 	switch (msg[0]) {
 	case STATE_MSG_CHAR:
 		decode_state_message(msg, len);
