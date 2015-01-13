@@ -75,7 +75,7 @@ void timer_thread_function()
 	{
 		while (game_state == STATE_GAME)	
 		{
-			infof("do move");
+			//infof("do move");
 			do_move = 1;
 			nanosleep(&ts, (struct timespec *)NULL);
 		}
