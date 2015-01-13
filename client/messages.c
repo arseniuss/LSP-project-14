@@ -105,21 +105,22 @@ void decode_state_message(const char *msg, ssize_t len)
 		for (j = 1; *ptr != '\0'; j++, ptr++) {
 			switch (*ptr) {
 			case STATE_MSG_UP_CHAR:
-				field[x + (y - 1) * client_config.width] = id;
+				y--;
 				break;
 			case STATE_MSG_RIGHT_CHAR:
-				field[x + 1 + y * client_config.width] = id;
+				x++;
 				break;
 			case STATE_MSG_DOWN_CHAR:
-				field[x + (y + 1) * client_config.width] = id;
+				y++;
 				break;
 			case STATE_MSG_LEFT_CHAR:
-				field[x - 1 + y * client_config.width] = id;
+				x--;
 				break;
 			default:
 				debugf("Error in snake coordinates! Got char %c\n", *ptr);
 				return;
 			}
+			field[x + y * client_config.width] = id;
 		}
 		ptr++;
 	}
