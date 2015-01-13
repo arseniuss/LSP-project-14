@@ -349,20 +349,20 @@ char get_opposite_dir(int i)
 void get_new_head(int i)
 {
 	if (snakes[i].dir == STATE_MSG_UP_CHAR) {
-		new_head[i].x = snakes[i].points[snakes[i].head_idx].x - 1;
-		new_head[i].y = snakes[i].points[snakes[i].head_idx].y;
+		new_head[i].x = snakes[i].points[snakes[i].head_idx].y - 1;
+		new_head[i].y = snakes[i].points[snakes[i].head_idx].x;
 	}
 	if (snakes[i].dir == STATE_MSG_DOWN_CHAR) {
-		new_head[i].x = snakes[i].points[snakes[i].head_idx].x + 1;
-		new_head[i].y = snakes[i].points[snakes[i].head_idx].y;
+		new_head[i].x = snakes[i].points[snakes[i].head_idx].y + 1;
+		new_head[i].y = snakes[i].points[snakes[i].head_idx].x;
 	}
 	if (snakes[i].dir == STATE_MSG_LEFT_CHAR) {
-		new_head[i].x = snakes[i].points[snakes[i].head_idx].x;
-		new_head[i].y = snakes[i].points[snakes[i].head_idx].y - 1;
+		new_head[i].x = snakes[i].points[snakes[i].head_idx].y;
+		new_head[i].y = snakes[i].points[snakes[i].head_idx].x - 1;
 	}
 	if (snakes[i].dir == STATE_MSG_RIGHT_CHAR) {
-		new_head[i].x = snakes[i].points[snakes[i].head_idx].x;
-		new_head[i].y = snakes[i].points[snakes[i].head_idx].y + 1;
+		new_head[i].x = snakes[i].points[snakes[i].head_idx].y;
+		new_head[i].y = snakes[i].points[snakes[i].head_idx].x + 1;
 	}
 }
 
