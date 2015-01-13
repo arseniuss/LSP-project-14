@@ -228,6 +228,8 @@ void game_loop()
 	case PLAYER_STATE_END:
 		if (client_config.winner == client_config.id)
 			printf("Jūs uzvarējāt!\n");
+		else
+			printf("Jūs zaudējāt!\n");
 		break;
 	}
 }
