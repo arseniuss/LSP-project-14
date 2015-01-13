@@ -32,6 +32,9 @@ unsigned char multiplayer_game;
 
 void start_game()
 {
+	//taimeris
+	alarm(game_config.time_limit * 60);	
+		
 	array_size = MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE + 1;
 	int i;
 	int count = 0;	
@@ -178,6 +181,26 @@ void end_game(int i)
 	{
 		send_end_message(&players[0].addr, players[i].id);
 	}
+}
+
+void end_game_time_limit()
+{
+	infof("Time limit reached");	
+	unsigned char max = 0;
+	int max_idx = -1;
+	int i;	
+	for (i = 0; i < server_config.max_players; i++)
+	{
+		if (players[i].state == 1)
+		{
+			if (players[i].points > max)
+			{
+				max = players[i].points;
+				max_idx = i;
+			}
+		}
+	}
+	end_game(max_idx);	
 }
 
 void get_random_food(int i)
@@ -529,7 +552,6 @@ void send_end_message(struct sockaddr_in *addr, unsigned char id)
 	size_t len = create_end_message(message, id);
 	send_message(addr, len, message);
 }
-
 
 
 
