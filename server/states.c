@@ -28,11 +28,13 @@ char field[MAX_GAME_HEIGHT + 2][MAX_GAME_WIDTH + 2];
 int array_size;
 char message[MAX_MESSAGE_SIZE];
 char orig_message[MAX_MESSAGE_SIZE];
+unsigned char multiplayer_game;
 
 void start_game()
 {
 	array_size = MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE + 1;
-	int i;	
+	int i;
+	int count = 0;	
 	for (i = 0; i < server_config.max_players; i++)
 	{
 		got_food[i] = 'N';
@@ -41,17 +43,18 @@ void start_game()
 	//inicializē čūskas tiem spēlētājiem, kas aktīvi
 	if (players[0].state == 1)
 	{
+		count++;		
 		snakes[0].state = 1;
 		snakes[0].size = game_config.initial_size;
 		snakes[0].head_idx = 0;
 		snakes[0].tail_idx = snakes[0].head_idx + snakes[0].size - 1;
-		snakes[0].dir = 'r';
-		moves[0] = 'r';
+		snakes[0].dir = STATE_MSG_RIGHT_CHAR;
+		moves[0] = STATE_MSG_RIGHT_CHAR;
 		for (i = 0; i < snakes[0].size; i++)
 		{
 			snakes[0].points[i].x = 1;
 			snakes[0].points[i].y = snakes[0].size - i;
-			snakes[0].string[i] = 'l';
+			snakes[0].string[i] = STATE_MSG_LEFT_CHAR;
 		}
 	}
 	else
@@ -60,17 +63,18 @@ void start_game()
 	}
 	if (players[1].state == 1)
 	{
+		count++;		
 		snakes[1].state = 1;
 		snakes[1].size = game_config.initial_size;
 		snakes[1].head_idx = 0;
 		snakes[1].tail_idx = snakes[1].head_idx + snakes[1].size - 1;
-		snakes[1].dir = 'd';
-		moves[1] = 'd';
+		snakes[1].dir = STATE_MSG_DOWN_CHAR;
+		moves[1] = STATE_MSG_DOWN_CHAR;
 		for (i = 0; i < snakes[1].size; i++)
 		{
 			snakes[1].points[i].x = snakes[0].size - i;
 			snakes[1].points[i].y = game_config.field_width;
-			snakes[1].string[i] = 'u';
+			snakes[1].string[i] = STATE_MSG_UP_CHAR;
 		}
 	}
 	else
@@ -79,17 +83,18 @@ void start_game()
 	}
 	if (players[2].state == 1)
 	{
+		count++;
 		snakes[2].state = 1;
 		snakes[2].size = game_config.initial_size;
 		snakes[2].head_idx = 0;
 		snakes[2].tail_idx = snakes[2].head_idx + snakes[2].size - 1;
-		snakes[2].dir = 'l';
-		moves[2] = 'l';
+		snakes[2].dir = STATE_MSG_LEFT_CHAR;
+		moves[2] = STATE_MSG_LEFT_CHAR;
 		for (i = 0; i < snakes[2].size; i++)
 		{
 			snakes[2].points[i].x = game_config.field_height;
 			snakes[2].points[i].y = game_config.field_width + snakes[0].size - i;
-			snakes[2].string[i] = 'r';
+			snakes[2].string[i] = STATE_MSG_RIGHT_CHAR;
 		}
 	}
 	else
@@ -98,22 +103,33 @@ void start_game()
 	}
 	if (players[3].state == 1)
 	{
+		count++;
 		snakes[3].state = 1;
 		snakes[3].size = game_config.initial_size;
 		snakes[3].head_idx = 0;
 		snakes[3].tail_idx = snakes[3].head_idx + snakes[3].size - 1;
-		snakes[3].dir = 'u';
-		moves[3] = 'u';
+		snakes[3].dir = STATE_MSG_UP_CHAR;
+		moves[3] = STATE_MSG_UP_CHAR;
 		for (i = 0; i < snakes[3].size; i++)
 		{
 			snakes[3].points[i].x = game_config.field_height + snakes[0].size - i;
 			snakes[3].points[i].y = 1;
-			snakes[3].string[i] = 'd';
+			snakes[3].string[i] = STATE_MSG_DOWN_CHAR;
 		}
 	}
 	else
 	{
 		snakes[3].state = 0;
+	}
+		
+	//pazīme, vai ir vairāk kā viens spēlētājs
+	if (count > 1)
+	{
+		multiplayer_game = 1;
+	}
+	else
+	{
+		multiplayer_game = 0;
 	}
 	
 	//iezīmē laukuma robežas, aizpilda laukumu ar space simboliem
@@ -151,18 +167,16 @@ void clear_game()
 	}
 }
 
-void end_game()
+void end_game(int i)
 {
 	game_state = STATE_INITIAL;	
-	int i;
-	int count = 0;
-	for (i = 0; i < server_config.max_players; i++)
-	{
-		if (players[i].state == 1) count++;
-	}
-	if (count == 0)
+	if (i == -1)
 	{	
-		send_end_message(&players[0].addr, players[0].id);
+		send_end_message(&players[0].addr, ' ');
+	}
+	else
+	{
+		send_end_message(&players[0].addr, players[i].id);
 	}
 }
 
@@ -228,9 +242,9 @@ void move_all()
 			case 'P' :
 				snakes[i].state = 2;
 				break;
-			case 'D' :
+			case STATE_MSG_DOWN_CHAR :
 				snakes[i].state = 2;
-				field[new_head[i].x][new_head[i].y] = 'D'; //otra čūska izbeigsies nākamajā daļā
+				field[new_head[i].x][new_head[i].y] = STATE_MSG_DOWN_CHAR; //otra čūska izbeigsies nākamajā daļā
 				break;
 			case ' ' :
 				field[new_head[i].x][new_head[i].y] = 'P';
@@ -238,10 +252,19 @@ void move_all()
 		}			
 	}
 
-	//Ja vairs nav spēlētāju spēlē
-	if (count == 0)
+	//Ja palicis viens (multiplayer) vai vairs nav spēlētāju (singleplayer) 
+	if (multiplayer_game == 1 && count < 2)
 	{		
-		end_game();
+		for (i = 0; i < server_config.max_players; i++)
+		{
+			if (players[i].state != 1) break;
+		}		
+		end_game(i);
+		return;
+	}
+	if (multiplayer_game == 0 && count < 1)
+	{
+		end_game(-1);
 		return;
 	}
 	
@@ -261,6 +284,10 @@ void move_all()
 			{
 				got_food[i] = 'N';
 				players[i].points++;
+				if (players[i].points >= game_config.score_limit)
+				{
+					
+				}
 			}
 			else
 			{
@@ -311,11 +338,11 @@ void move_all()
 
 void valid_move(int i)
 {
-	if ((snakes[i].dir == 'u' || snakes[i].dir == 'd') && (moves[i] == 'l' || moves[i] == 'r'))
+	if ((snakes[i].dir == STATE_MSG_UP_CHAR || snakes[i].dir == STATE_MSG_DOWN_CHAR) && (moves[i] == STATE_MSG_LEFT_CHAR || moves[i] == STATE_MSG_RIGHT_CHAR))
 	{
 		snakes[i].dir = moves[i];
 	}
-	if ((snakes[i].dir == 'l' || snakes[i].dir == 'r') && (moves[i] == 'u' || moves[i] == 'd'))
+	if ((snakes[i].dir == STATE_MSG_LEFT_CHAR || snakes[i].dir == STATE_MSG_RIGHT_CHAR) && (moves[i] == STATE_MSG_UP_CHAR || moves[i] == STATE_MSG_DOWN_CHAR))
 	{
 		snakes[i].dir = moves[i];
 	}
@@ -325,17 +352,17 @@ char get_opposite_dir(int i)
 {
 	switch (snakes[i].dir)
 	{
-		case 'u' :
-			return 'd';
+		case STATE_MSG_UP_CHAR :
+			return STATE_MSG_DOWN_CHAR;
 			break;
-		case 'd' :
-			return 'u';
+		case STATE_MSG_DOWN_CHAR :
+			return STATE_MSG_UP_CHAR;
 			break;
-		case 'l' :			
-			return 'r';
+		case STATE_MSG_LEFT_CHAR :			
+			return STATE_MSG_RIGHT_CHAR;
 			break;
-		case 'r' :
-			return 'l';
+		case STATE_MSG_RIGHT_CHAR :
+			return STATE_MSG_LEFT_CHAR;
 			break;
 		default :		
 			return ' ';
@@ -344,22 +371,22 @@ char get_opposite_dir(int i)
 
 void get_new_head(int i)
 {	
-	if (snakes[i].dir == 'u')
+	if (snakes[i].dir == STATE_MSG_UP_CHAR)
 	{
 		new_head[i].x = snakes[i].points[snakes[i].head_idx].x - 1;
 		new_head[i].y = snakes[i].points[snakes[i].head_idx].y;
 	}
-	if (snakes[i].dir == 'd')
+	if (snakes[i].dir == STATE_MSG_DOWN_CHAR)
 	{
 		new_head[i].x = snakes[i].points[snakes[i].head_idx].x + 1;
 		new_head[i].y = snakes[i].points[snakes[i].head_idx].y;
 	}
-	if (snakes[i].dir == 'l')
+	if (snakes[i].dir == STATE_MSG_LEFT_CHAR)
 	{
 		new_head[i].x = snakes[i].points[snakes[i].head_idx].x;
 		new_head[i].y = snakes[i].points[snakes[i].head_idx].y - 1;
 	}
-	if (snakes[i].dir == 'r')
+	if (snakes[i].dir == STATE_MSG_RIGHT_CHAR)
 	{
 		new_head[i].x = snakes[i].points[snakes[i].head_idx].x;
 		new_head[i].y = snakes[i].points[snakes[i].head_idx].y + 1;
@@ -451,34 +478,13 @@ int get_player_string(int i, char * buffer)
 	buffer[1] = (unsigned char)(snakes[i].points[snakes[i].head_idx].x - 1);
 	buffer[2] = (unsigned char)(snakes[i].points[snakes[i].head_idx].y - 1);
 	buffer[3] = (unsigned char)(snakes[i].size - 1);
+#ifdef CONFIG_COMPRESSED_STATE
 	code_len = get_snake_coded(i, &buffer[4]);
+#else
+	code_len = get_snake_original(i, &buffer[4]);
+#endif		
 	buffer[4+code_len] = '\0';
 	return code_len + 5;
-}
-
-int get_snake_coded(int i, char * buffer)
-{
-	int len_orig = get_snake_original(i, orig_message);
-	int buffer_idx = 0;	
-	int k = 0;
-	char c;
-	int count = 0;
-	while (k < len_orig)
-	{
-		c = orig_message[k];
-		k++;
-		count = 1;
-		while (orig_message[k] == c)
-		{
-			count++;
-			k++;
-		}
-		buffer[buffer_idx] = (unsigned char) count;
-		buffer[buffer_idx+1] = c;
-		buffer_idx += 2;
-	}
-	buffer[buffer_idx] = '\0';
-	return buffer_idx;
 }
 
 int get_snake_original(int i, char * buffer)
