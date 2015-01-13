@@ -161,8 +161,7 @@ void end_game()
 		if (players[i].state == 1) count++;
 	}
 	if (count == 0)
-	{
-		printf("Send end message\n");		
+	{	
 		send_end_message(&players[0].addr, players[0].id);
 	}
 }
@@ -175,8 +174,6 @@ void get_random_food(int i)
 	if (field[rx][ry] == ' ')
 	{		
 		food[i].x = (unsigned char)rx;
-		printf("esma x: %d\n", rx); 
-		printf("esma y: %d\n", ry);
 		food[i].y = (unsigned char)ry;		
 		field[food[i].x][food[i].y] = 'A';
 	}
@@ -243,8 +240,7 @@ void move_all()
 
 	//Ja vairs nav spēlētāju spēlē
 	if (count == 0)
-	{
-		printf("beidzam!\n");		
+	{		
 		end_game();
 		return;
 	}
@@ -304,8 +300,7 @@ void move_all()
 	for (i = 0; i < game_config.food_amount; i++)
 	{
 		if (field[food[i].x][food[i].y] != (unsigned char)'A')	
-		{
-			printf("Field is: %c\n", field[food[i].x][food[i].y]);			
+		{		
 			get_random_food(i);
 		}
 	}
@@ -336,13 +331,13 @@ char get_opposite_dir(int i)
 		case 'd' :
 			return 'u';
 			break;
-		case 'l' :
+		case 'l' :			
 			return 'r';
 			break;
 		case 'r' :
 			return 'l';
 			break;
-		default :
+		default :		
 			return ' ';
 	}
 }
@@ -375,11 +370,11 @@ int get_new_head_idx(int i)
 {
 	if (snakes[i].head_idx == 0)
 	{
-		return MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE;
+		return (MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE);
 	}
 	else
 	{
-		return snakes[i].head_idx - 1;
+		return (snakes[i].head_idx - 1);
 	}
 }
 
@@ -387,11 +382,11 @@ int get_new_tail_idx(int i)
 {
 	if (snakes[i].tail_idx == 0)
 	{
-		return MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE;
+		return (MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE);
 	}
 	else
 	{
-		return snakes[i].tail_idx - 1;
+		return (snakes[i].tail_idx - 1);
 	}
 }
 
@@ -455,7 +450,7 @@ int get_player_string(int i, char * buffer)
 	buffer[0] = players[i].id;
 	buffer[1] = (unsigned char)(snakes[i].points[snakes[i].head_idx].x - 1);
 	buffer[2] = (unsigned char)(snakes[i].points[snakes[i].head_idx].y - 1);
-	buffer[3] = (unsigned char)(snakes[i].size);
+	buffer[3] = (unsigned char)(snakes[i].size - 1);
 	code_len = get_snake_coded(i, &buffer[4]);
 	buffer[4+code_len] = '\0';
 	return code_len + 5;
@@ -482,21 +477,36 @@ int get_snake_coded(int i, char * buffer)
 		buffer[buffer_idx+1] = c;
 		buffer_idx += 2;
 	}
+	buffer[buffer_idx] = '\0';
 	return buffer_idx;
 }
 
 int get_snake_original(int i, char * buffer)
 {
 	int k = 0;
-	int c;	
-	for (c = snakes[i].head_idx; c < snakes[i].tail_idx; c++)
+	int c;
+	if (snakes[i].head_idx < snakes[i].tail_idx)
 	{
-		if (c > MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE)
-		{
-			c = 0;
+		for (c = snakes[i].head_idx; c < snakes[i].tail_idx; c++)
+		{		
+			buffer[k] = snakes[i].string[c];
+			k++;
 		}
-		buffer[k] = snakes[i].string[c];
-		k++;
+	}
+	else
+	{
+		for (c = snakes[i].head_idx; c < MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE+1; c++)
+		{
+			buffer[k] = snakes[i].string[c];
+			k++;
+			
+			
+		}
+		for (c = 0; c < snakes[i].tail_idx; c++)
+		{
+			buffer[k] = snakes[i].string[c];
+			k++;
+		}
 	}
 	buffer[k] = '\0';
 	return k;
@@ -513,7 +523,6 @@ void send_end_message(struct sockaddr_in *addr, unsigned char id)
 	size_t len = create_end_message(message, id);
 	send_message(addr, len, message);
 }
-
 
 
 
