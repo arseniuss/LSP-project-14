@@ -9,6 +9,7 @@
 #define	SERVER_H
 
 #include "../common/Structures.h"
+#include "../common/config.h"
 
 void parse_config();
 int main_loop();
@@ -55,7 +56,7 @@ void clear_players();
 /* Gameplay */
 void start_game();
 void clear_game();
-void end_game();
+void end_game(int i);
 void remove_player(int i);
 void player_move(int i, char m);
 void move_all();
