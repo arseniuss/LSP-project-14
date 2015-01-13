@@ -1,5 +1,13 @@
+/*
+ * File:   common/config.h
+ * Author: Ilze Dzene-Vanaga
+ *
+ * Source configuration
+ */
+
+#ifndef CONFIG_H
+#define	CONFIG_H
+
 //#define CONFIG_COMPRESSED_STATE
-#define STATE_MSG_UP_CHAR 	'w'
-#define STATE_MSG_DOWN_CHAR	's'
-#define STATE_MSG_LEFT_CHAR	'a'
-#define STATE_MSG_RIGHT_CHAR	'd'
+
+#endif
