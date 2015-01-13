@@ -100,21 +100,21 @@ void decode_state_message(const char *msg, ssize_t len)
 		x = *ptr++;
 		y = *ptr++;
 
-		field[x + y * client_config.height] = id;
+		field[x + y * client_config.width] = id;
 
 		for (j = 1; *ptr != '\0'; j++, ptr++) {
 			switch (*ptr) {
 			case STATE_MSG_UP_CHAR:
-				field[x + (y - 1) * client_config.height] = id;
+				field[x + (y - 1) * client_config.width] = id;
 				break;
 			case STATE_MSG_RIGHT_CHAR:
-				field[x + 1 + y * client_config.height] = id;
+				field[x + 1 + y * client_config.width] = id;
 				break;
 			case STATE_MSG_DOWN_CHAR:
-				field[x + (y + 1) * client_config.height] = id;
+				field[x + (y + 1) * client_config.width] = id;
 				break;
 			case STATE_MSG_LEFT_CHAR:
-				field[x - 1 + y * client_config.height] = id;
+				field[x - 1 + y * client_config.width] = id;
 				break;
 			default:
 				debugf("Error in snake coordinates! Got char %c\n", *ptr);
@@ -131,12 +131,26 @@ void decode_state_message(const char *msg, ssize_t len)
 	for (i = 0; i < food_count; i++, ptr += 2) {
 		x = *ptr;
 		y = *(ptr + 1);
-		field[x + y * client_config.height] = 'f';
+		field[x + y * client_config.width] = 'f';
 	}
 
 	debugf("Decoded STATE message\n");
 
 	client_config.state = PLAYER_STATE_ACTIVE;
+}
+
+void decode_dead_message(const char *msg, ssize_t len)
+{
+	if (msg[0] == DEAD_MSG_CHAR && msg[1] == '\0')
+		client_config.state = PLAYER_STATE_DEAD;
+}
+
+void decode_end_message(const char *msg, ssize_t len)
+{
+	if (msg[0] == DEAD_MSG_CHAR && msg[1] == '\0') {
+		client_config.winner = msg[2];
+		client_config.state = PLAYER_STATE_END;
+	}
 }
 
 void decode_message(const char *msg, ssize_t len)
@@ -146,6 +160,12 @@ void decode_message(const char *msg, ssize_t len)
 	switch (msg[0]) {
 	case STATE_MSG_CHAR:
 		decode_state_message(msg, len);
+		break;
+	case DEAD_MSG_CHAR:
+		decode_dead_message(msg, len);
+		break;
+	case END_MSG_CHAR:
+		decode_end_message(msg, len);
 		break;
 	}
 }

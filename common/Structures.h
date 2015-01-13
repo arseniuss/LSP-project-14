@@ -39,6 +39,7 @@ struct Server {
  */
 struct Client {
 	unsigned char id;
+	unsigned char winner;
 	unsigned char state; //0 - left, 1 - active, 2 - dead
 	char username[MAX_USERNAME_LEN];
 
@@ -68,11 +69,11 @@ struct Player {
 struct Snake {
 	struct Point points[MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE + 1];
 	char string[MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE + 1];
-	unsigned char state; //0 - dead, 1 - active, 2 - is dying	
+	unsigned char state; //0 - dead, 1 - active, 2 - is dying
 	unsigned char size;
 	unsigned char head_idx;
 	unsigned char tail_idx;
-	char dir;	
+	char dir;
 };
 
 #endif	/* STRUCTURES_H */

@@ -199,6 +199,15 @@ void game_loop()
 			game_draw();
 	} while (client_config.state < PLAYER_STATE_DEAD);
 
+	switch (client_config.state) {
+	case PLAYER_STATE_DEAD:
+		printf("Jūs nomirāt!\n");
+		break;
+	case PLAYER_STATE_END:
+		printf("Spēli uzvarēja '%c' spēlētājs!\n", client_config.winner);
+		break;
+	}
+
 	/* Clear client ID */
 	client_config.id = '\0';
 }

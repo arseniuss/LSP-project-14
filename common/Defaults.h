@@ -26,7 +26,7 @@
 #define DEFAULT_TIME_LIMIT		2
 #define DEFAULT_PLAYER_COUNT		4
 
-#define DEFAULT_BLANK_CHAR		'#'
+#define DEFAULT_BLANK_CHAR		'_'
 
 #define DEFAULT_SNAKE_INITIAL_SIZE	3
 
@@ -40,6 +40,7 @@
 #define PLAYER_STATE_ACTIVE		1
 /* States below PLAYER_STATE_DEAD should be in- and pre- game states */
 #define PLAYER_STATE_DEAD		2
-#define PLAYER_STATE_LEFT		3
+#define PLAYER_STATE_END		3
+#define PLAYER_STATE_LEFT		4
 
 #endif	/* DEFAULTS_H */
