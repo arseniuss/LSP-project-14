@@ -113,10 +113,13 @@
           <buildCommand>${MAKE} all DEBUG=1</buildCommand>
           <cleanCommand>${MAKE} clean</cleanCommand>
           <executablePath></executablePath>
+          <cTool>
+            <preprocessorList>
+              <Elem>DEBUG</Elem>
+            </preprocessorList>
+          </cTool>
         </makeTool>
       </makefileType>
-      <item path="client/Client.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="client/config.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="client/game.c" ex="false" tool="0" flavor2="0">
@@ -127,11 +130,9 @@
       </item>
       <item path="client/messages.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="common/Messages.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="common/errors.c" ex="false" tool="0" flavor2="2">
       </item>
-      <item path="common/messages.c" ex="false" tool="0" flavor2="0">
+      <item path="common/messages.c" ex="false" tool="0" flavor2="2">
       </item>
       <folder path="0/client">
         <cTool>
@@ -158,9 +159,9 @@
           </incDir>
         </cTool>
       </folder>
-      <item path="server/Server.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="server/config.c" ex="false" tool="0" flavor2="2">
+      </item>
+      <item path="server/listener.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="server/main.c" ex="false" tool="0" flavor2="2">
       </item>
@@ -282,6 +283,8 @@
       </folder>
       <item path="server/config.c" ex="false" tool="0" flavor2="2">
       </item>
+      <item path="server/listener.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="server/main.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="server/messages.c" ex="false" tool="0" flavor2="2">
@@ -356,21 +359,24 @@
           <executablePath>snake-server</executablePath>
         </makeTool>
       </makefileType>
-      <item path="client/Client.h" ex="false" tool="3" flavor2="0">
+      <item path="client/config.c" ex="false" tool="0" flavor2="2">
       </item>
-      <item path="client/config.c" ex="false" tool="0" flavor2="0">
+      <item path="client/game.c" ex="false" tool="0" flavor2="2">
       </item>
-      <item path="client/game.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="client/graphics.c" ex="false" tool="0" flavor2="0">
+      <item path="client/graphics.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="client/main.c" ex="false" tool="0" flavor2="2">
       </item>
-      <item path="client/messages.c" ex="false" tool="0" flavor2="0">
+      <item path="client/messages.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="common/errors.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="common/messages.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </cTool>
       </item>
       <folder path="0/client">
         <cTool>
@@ -400,7 +406,7 @@
           </preprocessorList>
         </cTool>
       </folder>
-      <item path="server/config.c" ex="false" tool="0" flavor2="0">
+      <item path="server/config.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="server/listener.c" ex="false" tool="0" flavor2="0">
       </item>

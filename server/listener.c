@@ -115,18 +115,7 @@ void handle_message(const char *msg, size_t len, struct sockaddr_in *addr)
 	if (len <= 0)
 		return;
 
-#ifdef DEBUG
-	int i;
-
-	debugf("Message (%ld): ", len);
-	for (i = 0; i < len; ++i) {
-		if (msg[i] == '\0')
-			printf("\\0");
-		else
-			putchar(msg[i]);
-	}
-	printf("\n");
-#endif
+	debug_message(msg, len);
 
 	switch (msg[0]) {
 	case 'r':

@@ -142,14 +142,15 @@ int main(int argc, char** argv)
 	input_username();
 
 	setup_char_input();
-	do {
-		if (connect_to_server())
+	if (register_into_server())
+		do {
 			game_loop();
-		disconnect_from_server();
 
-		if (!repeat_game())
-			break;
-	} while (1);
+			if (!repeat_game()) {
+				break;
+			}
+		} while (1);
+	disconnect_from_server();
 	unset_char_input();
 
 	return 0;

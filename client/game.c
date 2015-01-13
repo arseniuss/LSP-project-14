@@ -28,8 +28,9 @@ ssize_t resp_len;
 struct ClientSnake snake[MAX_PLAYER_COUNT];
 int snake_count = 0;
 struct Point food[MAX_FOOD_AMOUNT];
+int food_count = 0;
 
-int connect_to_server()
+int register_into_server()
 {
 	int tries, resp, ret;
 	socklen_t slen = sizeof(client_config.addr);
@@ -84,8 +85,10 @@ int connect_to_server()
 	if (resp_len <= 0) {
 		bash_set_color(foreground[RED_COLOR]);
 		fflush(stdout);
-		error("\nNevar piereģistrēties serverī %s:%d",
+		printf("\nNevar piereģistrēties serverī %s:%d\n",
 			client_config.server_ip, client_config.port_no);
+		bash_set_color(foreground[DEFAULT_COLOR]);
+		return 0;
 	}
 
 	if ((resp = decode_accept_message(msg, resp_len)) < 0) {
@@ -107,10 +110,11 @@ int connect_to_server()
 
 void disconnect_from_server()
 {
+	send_player_action('q');
 	close(sender);
 }
 
-void send_player_input(int input)
+void send_player_action(int input)
 {
 	socklen_t slen = sizeof(client_config.addr);
 
@@ -166,6 +170,8 @@ void game_loop()
 	int player_input;
 	socklen_t slen = sizeof(client_config.addr);
 
+	printf("Nospiediet '%c', lai sāktu spēli!\n", 'b');
+
 	bash_set_window_size(client_config.width, client_config.height);
 
 	do {
@@ -180,7 +186,7 @@ void game_loop()
 		}
 
 		if ((player_input = fgetc(stdin)) != EOF) {
-			send_player_input(player_input);
+			send_player_action(player_input);
 
 			switch (player_input) {
 			case 'Q':

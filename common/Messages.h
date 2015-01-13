@@ -24,6 +24,7 @@
 #define STATE_MSG_DOWN_CHAR		's'
 #define STATE_MSG_LEFT_CHAR		'a'
 
-void correct_message(char *msg);
+void correct_message(char *msg, int count, ...);
+void debug_message(const char *msg, int len);
 
 #endif	/* MESSAGES_H */

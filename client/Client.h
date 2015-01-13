@@ -13,9 +13,10 @@ struct ClientSnake {
 extern struct ClientSnake snake[MAX_PLAYER_COUNT];
 extern int snake_count;
 extern struct Point food[MAX_FOOD_AMOUNT];
+extern int food_count;
 
 void parse_config();
-int connect_to_server();
+int register_into_server();
 void disconnect_from_server();
 void game_loop();
 
@@ -27,6 +28,8 @@ size_t create_leave_message(char *msg, unsigned char id);
 
 int decode_accept_message(const char *msg, ssize_t len);
 void decode_message(const char *msg, ssize_t len);
+
+void send_player_action(int input);
 
 /* Graphics */
 enum bash_color {

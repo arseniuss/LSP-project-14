@@ -19,9 +19,9 @@ size_t create_yes_message(char *msg, unsigned char id)
 {
 	size_t len;
 
-	len = sprintf(msg, "a\ry\r%c\r%d\r%d\r", id, game_config.field_width,
+	len = sprintf(msg, "a y %c %c %c ", id, game_config.field_width,
 		game_config.field_height);
-	correct_message(msg);
+	correct_message(msg, 5, 1, 3, 5, 7, 9);
 
 	return len;
 }
@@ -30,8 +30,8 @@ size_t create_no_message(char *msg)
 {
 	size_t len;
 
-	len = sprintf(msg, "a\rn\r");
-	correct_message(msg);
+	len = sprintf(msg, "a n ");
+	correct_message(msg, 2, 1, 3);
 
 	return len;
 }
@@ -40,8 +40,8 @@ size_t create_end_message(char *msg, unsigned char id)
 {
 	size_t len;
 
-	len = sprintf(msg, "e\r%c\r", id);
-	correct_message(msg);
+	len = sprintf(msg, "e %c ", id);
+	correct_message(msg, 2, 1, 3);
 
 	return len;
 }
@@ -50,8 +50,8 @@ size_t create_dead_message(char *msg)
 {
 	size_t len;
 
-	len = sprintf(msg, "d\r");
-	correct_message(msg);
+	len = sprintf(msg, "d ");
+	correct_message(msg, 1, 1);
 
 	return len;
 }

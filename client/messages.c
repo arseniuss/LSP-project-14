@@ -16,42 +16,44 @@
 
 size_t create_register_message(char *msg, const char *username)
 {
-	size_t ret = sprintf(msg, "r\r%s\r", username);
+	size_t ret = sprintf(msg, "r %s", username);
 
-	correct_message(msg);
+	correct_message(msg, 1, 1);
 
-	return ret;
+	return ret + 1;
 }
 
 size_t create_start_message(char *msg, unsigned char id)
 {
-	size_t ret = sprintf(msg, "s\r%c\r", id);
+	size_t ret = sprintf(msg, "s %c ", id);
 
-	correct_message(msg);
+	correct_message(msg, 2, 1, 3);
 
 	return ret;
 }
 
 size_t create_move_message(char *msg, char move, unsigned char id)
 {
-	size_t ret = sprintf(msg, "m\r%c\r%c\r", move, id);
+	size_t ret = sprintf(msg, "m %c %c ", move, id);
 
-	correct_message(msg);
+	correct_message(msg, 3, 1, 3, 5);
 
 	return ret;
 }
 
 size_t create_leave_message(char *msg, unsigned char id)
 {
-	size_t ret = sprintf(msg, "l\r%c\t", id);
+	size_t ret = sprintf(msg, "l %c ", id);
 
-	correct_message(msg);
+	correct_message(msg, 2, 1, 3);
 
 	return ret;
 }
 
 int decode_accept_message(const char *msg, ssize_t len)
 {
+	debug_message(msg, len);
+
 	if (msg[0] != ACCEPT_MSG_CHAR && msg[1] != '\0' && strlen(msg) != 9) {
 		debugf("Error in ACCEPT message format!");
 		return -1;
@@ -78,29 +80,26 @@ int decode_accept_message(const char *msg, ssize_t len)
 
 void decode_state_message(const char *msg, ssize_t len)
 {
-	int i, j, snake_cnt = msg[1];
+	int i, j;
 	const char *ptr;
 
+	snake_count = msg[1];
+
 	if (snake_count > MAX_PLAYER_COUNT) {
-		debugf("Error in max player count");
+		debugf("Too big snake count: %d", snake_count);
 		return;
 	}
 
+	debugf("field %d %d\n", client_config.width, client_config.height);
+
 	ptr = msg + 3;
-	for (i = 0; i <= snake_cnt; i++) {
+	for (i = 0; i < snake_count; i++) {
 		snake[i].id = *ptr++;
 		snake[i].points[0].x = *ptr++;
 		snake[i].points[0].y = *ptr++;
 
-		debugf("Snake no. %d start at %d %d\n", i,
-			snake[i].points[0].x, snake[i].points[0].y);
-
-#ifdef DEBUG
-		if (snake[i].points[0].x > client_config.width ||
-			snake[i].points[0].x > client_config.height)
-			debugf("Error in snake no. %d starting points!\n", i);
-#endif
-
+		debugf("snake 0 [%d, %d] %c\n", snake[i].points[0].x,
+			snake[i].points[0].y, *ptr);
 		for (j = 1; *ptr != '\0'; j++, ptr++) {
 			switch (*ptr) {
 			case STATE_MSG_UP_CHAR:
@@ -124,39 +123,29 @@ void decode_state_message(const char *msg, ssize_t len)
 				return;
 			}
 
-			debugf("snake [%d, %d] %c\n", snake[i].points[j].x,
+			debugf("snake %d [%d, %d] %c\n", j, snake[i].points[j].x,
 				snake[i].points[j].y, *ptr);
 		}
 		snake[i].len = j - 1;
 		ptr++;
 	}
 
-	for (i = 0; *ptr != '\0'; i++, ptr += 2) {
+	food_count = *ptr++;
+	ptr++;
+	debugf("food count %d\n", food_count);
+
+	for (i = 0; i < food_count; i++, ptr += 2) {
 		food[i].x = *ptr;
 		food[i].y = *(ptr + 1);
+		debugf("food %d [%d, %d]\n", i, food[i].x, food[i].y);
 	}
-
-	/* Save global snake_count */
-	snake_count = snake_cnt;
 
 	debugf("Decoded STATE message\n");
 }
 
 void decode_message(const char *msg, ssize_t len)
 {
-#ifdef DEBUG
-	int d;
-
-	debugf("Got message: ");
-	for (d = 0; d < len; ++d)
-		if (msg[d] == 0)
-			printf("\\0|");
-		else if (!isgraph(msg[d]))
-			printf("%d|", msg[d]);
-		else
-			printf("%c|", msg[d]);
-	printf("\n");
-#endif
+	debug_message(msg, len);
 
 	switch (msg[0]) {
 	case STATE_MSG_CHAR:
