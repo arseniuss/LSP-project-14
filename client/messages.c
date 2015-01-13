@@ -80,8 +80,9 @@ int decode_accept_message(const char *msg, ssize_t len)
 
 void decode_state_message(const char *msg, ssize_t len)
 {
-	int i, j;
+	int i, j, snake_count, food_count;
 	const char *ptr;
+	unsigned char id, x, y;
 
 	snake_count = msg[1];
 
@@ -90,43 +91,36 @@ void decode_state_message(const char *msg, ssize_t len)
 		return;
 	}
 
+	memset(field, DEFAULT_BLANK_CHAR, sizeof(field));
 	debugf("field %d %d\n", client_config.width, client_config.height);
 
 	ptr = msg + 3;
 	for (i = 0; i < snake_count; i++) {
-		snake[i].id = *ptr++;
-		snake[i].points[0].x = *ptr++;
-		snake[i].points[0].y = *ptr++;
+		id = *ptr++;
+		x = *ptr++;
+		y = *ptr++;
 
-		debugf("snake 0 [%d, %d] %c\n", snake[i].points[0].x,
-			snake[i].points[0].y, *ptr);
+		field[x + y * client_config.height] = id;
+
 		for (j = 1; *ptr != '\0'; j++, ptr++) {
 			switch (*ptr) {
 			case STATE_MSG_UP_CHAR:
-				snake[i].points[j].x = snake[i].points[j - 1].x;
-				snake[i].points[j].y = snake[i].points[j - 1].y - 1;
+				field[x + (y - 1) * client_config.height] = id;
 				break;
 			case STATE_MSG_RIGHT_CHAR:
-				snake[i].points[j].x = snake[i].points[j - 1].x + 1;
-				snake[i].points[j].y = snake[i].points[j - 1].y;
+				field[x + 1 + y * client_config.height] = id;
 				break;
 			case STATE_MSG_DOWN_CHAR:
-				snake[i].points[j].x = snake[i].points[j - 1].x;
-				snake[i].points[j].y = snake[i].points[j - 1].y + 1;
+				field[x + (y + 1) * client_config.height] = id;
 				break;
 			case STATE_MSG_LEFT_CHAR:
-				snake[i].points[j].x = snake[i].points[j - 1].x - 1;
-				snake[i].points[j].y = snake[i].points[j - 1].y;
+				field[x - 1 + y * client_config.height] = id;
 				break;
 			default:
 				debugf("Error in snake coordinates! Got char %c\n", *ptr);
 				return;
 			}
-
-			debugf("snake %d [%d, %d] %c\n", j, snake[i].points[j].x,
-				snake[i].points[j].y, *ptr);
 		}
-		snake[i].len = j - 1;
 		ptr++;
 	}
 
@@ -135,12 +129,14 @@ void decode_state_message(const char *msg, ssize_t len)
 	debugf("food count %d\n", food_count);
 
 	for (i = 0; i < food_count; i++, ptr += 2) {
-		food[i].x = *ptr;
-		food[i].y = *(ptr + 1);
-		debugf("food %d [%d, %d]\n", i, food[i].x, food[i].y);
+		x = *ptr;
+		y = *(ptr + 1);
+		field[x + y * client_config.height] = 'f';
 	}
 
 	debugf("Decoded STATE message\n");
+
+	client_config.state = PLAYER_STATE_ACTIVE;
 }
 
 void decode_message(const char *msg, ssize_t len)

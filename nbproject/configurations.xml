@@ -3,7 +3,6 @@
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
       <df name="client">
-        <in>Client.h</in>
         <in>config.c</in>
         <in>game.c</in>
         <in>graphics.c</in>
@@ -11,15 +10,10 @@
         <in>messages.c</in>
       </df>
       <df name="common">
-        <in>Defaults.h</in>
-        <in>Defs.h</in>
-        <in>Messages.h</in>
-        <in>Structures.h</in>
         <in>errors.c</in>
         <in>messages.c</in>
       </df>
       <df name="server">
-        <in>Server.h</in>
         <in>config.c</in>
         <in>listener.c</in>
         <in>main.c</in>
@@ -79,25 +73,6 @@
           </incDir>
         </cTool>
       </folder>
-      <folder path="0/server">
-        <cTool>
-          <incDir>
-            <pElem>/usr/include/glib-2.0</pElem>
-            <pElem>/usr/lib/x86_64-linux-gnu/glib-2.0/include</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </folder>
-      <item path="server/config.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="server/listener.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="server/main.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="server/messages.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="server/states.c" ex="false" tool="0" flavor2="0">
-      </item>
     </conf>
     <conf name="All_Debug" type="0">
       <toolsSet>
@@ -150,25 +125,6 @@
           </preprocessorList>
         </cTool>
       </folder>
-      <folder path="0/server">
-        <cTool>
-          <incDir>
-            <pElem>/usr/include/glib-2.0</pElem>
-            <pElem>/usr/lib/x86_64-linux-gnu/glib-2.0/include</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </folder>
-      <item path="server/config.c" ex="false" tool="0" flavor2="2">
-      </item>
-      <item path="server/listener.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="server/main.c" ex="false" tool="0" flavor2="2">
-      </item>
-      <item path="server/messages.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="server/states.c" ex="false" tool="0" flavor2="0">
-      </item>
     </conf>
     <conf name="Client" type="0">
       <toolsSet>
@@ -183,11 +139,16 @@
           <buildCommandWorkingDir>.</buildCommandWorkingDir>
           <buildCommand>${MAKE} snake-client</buildCommand>
           <cleanCommand>${MAKE} clean</cleanCommand>
-          <executablePath></executablePath>
+          <executablePath>snake-client</executablePath>
+          <cTool>
+            <incDir>
+              <pElem>/usr/include/glib-2.0</pElem>
+              <pElem>/usr/lib/x86_64-linux-gnu/glib-2.0/include</pElem>
+              <pElem>.</pElem>
+            </incDir>
+          </cTool>
         </makeTool>
       </makefileType>
-      <item path="client/Client.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="client/config.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="client/game.c" ex="false" tool="0" flavor2="0">
@@ -198,27 +159,9 @@
       </item>
       <item path="client/messages.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="common/Defaults.h" ex="false" tool="3" flavor2="0">
+      <item path="common/errors.c" ex="false" tool="0" flavor2="2">
       </item>
-      <item path="common/Defs.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="common/Messages.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="common/Structures.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="common/errors.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="common/messages.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="server/Server.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="server/config.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="server/main.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="server/messages.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="server/states.c" ex="false" tool="0" flavor2="0">
+      <item path="common/messages.c" ex="false" tool="0" flavor2="2">
       </item>
     </conf>
     <conf name="Client_Debug" type="0">
@@ -236,8 +179,13 @@
           <cleanCommand>${MAKE} clean</cleanCommand>
           <executablePath>snake-client</executablePath>
           <cTool>
+            <incDir>
+              <pElem>/usr/include/glib-2.0</pElem>
+              <pElem>/usr/lib/x86_64-linux-gnu/glib-2.0/include</pElem>
+              <pElem>.</pElem>
+            </incDir>
             <preprocessorList>
-              <Elem>DEBUG</Elem>
+              <Elem>DEBUG=1</Elem>
             </preprocessorList>
           </cTool>
         </makeTool>
@@ -248,48 +196,13 @@
       </item>
       <item path="client/graphics.c" ex="false" tool="0" flavor2="2">
       </item>
-      <item path="client/main.c" ex="false" tool="0" flavor2="0">
+      <item path="client/main.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="client/messages.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="common/errors.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="common/messages.c" ex="false" tool="0" flavor2="2">
-      </item>
-      <folder path="0/client">
-        <cTool>
-          <incDir>
-            <pElem>/usr/include/glib-2.0</pElem>
-            <pElem>/usr/lib/x86_64-linux-gnu/glib-2.0/include</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </folder>
-      <folder path="0/common">
-        <cTool>
-          <incDir>
-            <pElem>/usr/include/glib-2.0</pElem>
-            <pElem>/usr/lib/x86_64-linux-gnu/glib-2.0/include</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </folder>
-      <folder path="0/server">
-        <cTool>
-          <preprocessorList>
-            <Elem>DEBUG=1</Elem>
-          </preprocessorList>
-        </cTool>
-      </folder>
-      <item path="server/config.c" ex="false" tool="0" flavor2="2">
-      </item>
-      <item path="server/listener.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="server/main.c" ex="false" tool="0" flavor2="2">
-      </item>
-      <item path="server/messages.c" ex="false" tool="0" flavor2="2">
-      </item>
-      <item path="server/states.c" ex="false" tool="0" flavor2="2">
       </item>
     </conf>
     <conf name="Server" type="0">
@@ -305,36 +218,44 @@
           <buildCommandWorkingDir>.</buildCommandWorkingDir>
           <buildCommand>${MAKE} snake-server</buildCommand>
           <cleanCommand>${MAKE} clean</cleanCommand>
-          <executablePath></executablePath>
+          <executablePath>snake-server</executablePath>
         </makeTool>
       </makefileType>
-      <item path="client/Client.h" ex="false" tool="3" flavor2="0">
+      <item path="client/config.c" ex="false" tool="0" flavor2="2">
       </item>
-      <item path="client/config.c" ex="false" tool="0" flavor2="0">
+      <item path="client/game.c" ex="false" tool="0" flavor2="2">
       </item>
-      <item path="client/game.c" ex="false" tool="0" flavor2="0">
+      <item path="client/graphics.c" ex="false" tool="0" flavor2="2">
       </item>
-      <item path="client/graphics.c" ex="false" tool="0" flavor2="0">
+      <item path="client/main.c" ex="false" tool="0" flavor2="2">
       </item>
-      <item path="client/main.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="client/messages.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="common/Defaults.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="common/Defs.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="common/Messages.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="common/Structures.h" ex="false" tool="3" flavor2="0">
+      <item path="client/messages.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="common/errors.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="common/messages.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="server/Server.h" ex="false" tool="3" flavor2="0">
-      </item>
+      <folder path="0/common">
+        <cTool>
+          <incDir>
+            <pElem>/usr/include/glib-2.0</pElem>
+            <pElem>/usr/lib/x86_64-linux-gnu/glib-2.0/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </folder>
+      <folder path="0/server">
+        <cTool>
+          <incDir>
+            <pElem>/usr/include/glib-2.0</pElem>
+            <pElem>/usr/lib/x86_64-linux-gnu/glib-2.0/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </folder>
       <item path="server/config.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="server/listener.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="server/main.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -402,11 +323,11 @@
             <pElem>.</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>DEBUG</Elem>
+            <Elem>DEBUG=1</Elem>
           </preprocessorList>
         </cTool>
       </folder>
-      <item path="server/config.c" ex="false" tool="0" flavor2="2">
+      <item path="server/config.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="server/listener.c" ex="false" tool="0" flavor2="0">
       </item>

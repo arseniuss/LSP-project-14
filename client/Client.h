@@ -5,15 +5,7 @@
 
 extern struct Client client_config;
 
-struct ClientSnake {
-	int len;
-	unsigned char id;
-	struct Point points[MAX_SNAKE_LENGTH];
-};
-extern struct ClientSnake snake[MAX_PLAYER_COUNT];
-extern int snake_count;
-extern struct Point food[MAX_FOOD_AMOUNT];
-extern int food_count;
+char field[MAX_GAME_WIDTH*MAX_GAME_HEIGHT];
 
 void parse_config();
 int register_into_server();
@@ -52,6 +44,7 @@ void bash_set_color(unsigned char color);
 void bash_save_cursor_pos();
 void bash_restore_cursor_pos();
 void bash_set_window_size(int x, int y);
+void bash_hide_cursor();
 
 
 #endif	/* CLIENT_H */

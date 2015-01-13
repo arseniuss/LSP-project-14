@@ -14,7 +14,7 @@ CFLAGS = -Wall \
 
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
-    CFLAGS += -DDEBUG
+    CFLAGS += -DDEBUG=1
 endif
 
 # Linker flags
@@ -63,4 +63,4 @@ snake-server: $(SERVER_OBJS)
 	$(CC) -MM -MT $@ $(CFLAGS) $< >> .depend
 	
 clean:
-	rm -f snake-client snake-server client/*.o server/*.o .depend
+	rm -f snake-client snake-server client/*.o common/*.o server/*.o .depend

@@ -34,8 +34,8 @@ unsigned char multiplayer_game;
 void start_game()
 {
 	//taimeris
-	alarm(game_config.time_limit * 60);	
-		
+	alarm(game_config.time_limit * 60);
+
 	array_size = MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE + 1;
 	int i;
 	int count = 0;
@@ -128,7 +128,7 @@ void start_game()
 			field[x][y] = ' ';
 		}
 		field[x][game_config.field_width + 1] = 'B';
-	}	
+	}
 
 	//āboli
 	srand(time(NULL));
@@ -150,35 +150,32 @@ void clear_game()
 }
 
 void end_game(int i)
-{	
+{
 	game_state = STATE_INITIAL;
 	if (i == -1) {
-		infof("Game has ended with no winners");		
+		infof("Game has ended with no winners");
 		send_end_message(&players[0].addr, ' ');
 	} else {
-		infof("Game has ended. Player %c has won!", players[i].id);		
+		infof("Game has ended. Player %c has won!", players[i].id);
 		send_end_message(&players[0].addr, players[i].id);
 	}
 }
 
 void end_game_time_limit()
 {
-	infof("Time limit reached");	
+	infof("Time limit reached");
 	unsigned char max = 0;
 	int max_idx = -1;
-	int i;	
-	for (i = 0; i < server_config.max_players; i++)
-	{
-		if (players[i].state == 1)
-		{
-			if (players[i].points > max)
-			{
+	int i;
+	for (i = 0; i < server_config.max_players; i++) {
+		if (players[i].state == 1) {
+			if (players[i].points > max) {
 				max = players[i].points;
 				max_idx = i;
 			}
 		}
 	}
-	end_game(max_idx);	
+	end_game(max_idx);
 }
 
 void get_random_food(int i)
@@ -439,16 +436,16 @@ int get_player_string(int i, char * buffer)
 	int code_len;
 	int k = 3;
 	buffer[0] = players[i].id;
-	buffer[1] = (unsigned char)(snakes[i].points[snakes[i].head_idx].x - 1);
-	buffer[2] = (unsigned char)(snakes[i].points[snakes[i].head_idx].y - 1);
+	buffer[1] = (unsigned char) (snakes[i].points[snakes[i].head_idx].x - 1);
+	buffer[2] = (unsigned char) (snakes[i].points[snakes[i].head_idx].y - 1);
 #ifdef CONFIG_COMPRESSED_STATE
-	buffer[k] = (unsigned char)(snakes[i].size - 1);
+	buffer[k] = (unsigned char) (snakes[i].size - 1);
 	k++;
 	code_len = get_snake_coded(i, &buffer[k]);
-#else	
+#else
 	code_len = get_snake_original(i, &buffer[k]);
-#endif		
-	buffer[k+code_len] = '\0';
+#endif
+	buffer[k + code_len] = '\0';
 	return code_len + k + 1;
 }
 

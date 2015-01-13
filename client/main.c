@@ -123,7 +123,7 @@ void setup_char_input()
 
 	ttystate.c_lflag &= ~(ICANON | ECHO);
 	ttystate.c_cc[VMIN] = 0;
-	ttystate.c_cc[VTIME] = 5;
+	ttystate.c_cc[VTIME] = 0;
 
 	tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
 }

@@ -35,7 +35,8 @@ unsigned char background[] = {
 
 void bash_position_cursor(int x, int y)
 {
-	printf("\033[%d;%df'", y, x);
+	system("PS1=\"\"");
+	printf("\033[%d;%dH", y, x);
 }
 
 void bash_clear_screen()
@@ -65,5 +66,10 @@ void bash_restore_cursor_pos()
 
 void bash_set_window_size(int x, int y)
 {
-	printf("\033[8;%d;%dt", y, x);
+	printf("\033[8;%d;%dt", y + 1, x + 1);
+}
+
+void bash_hide_cursor()
+{
+	printf("\e[?25l");
 }

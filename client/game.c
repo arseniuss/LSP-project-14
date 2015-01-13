@@ -25,10 +25,7 @@ char msg[MAX_MESSAGE_SIZE];
 size_t msg_len;
 ssize_t resp_len;
 
-struct ClientSnake snake[MAX_PLAYER_COUNT];
-int snake_count = 0;
-struct Point food[MAX_FOOD_AMOUNT];
-int food_count = 0;
+char field[MAX_GAME_WIDTH * MAX_GAME_HEIGHT];
 
 int register_into_server()
 {
@@ -154,15 +151,13 @@ void game_draw()
 
 	//bash_clear_screen();
 	bash_position_cursor(0, 0);
-	for (i = 0; i < snake_count; ++i) {
-		/* TODO: There is only 8 colors */
-		bash_set_color(background[i]);
-
-		for (j = 0; j < snake[i].len; ++j) {
-			bash_position_cursor(snake[i].points[j].x, snake[i].points[j].y);
-			putchar('#');
+	for (i = 0; i < client_config.height; ++i) {
+		for (j = 0; j < client_config.width; ++j) {
+			putchar(field[j + i * client_config.width]);
 		}
+		putchar('\n');
 	}
+	putchar('\n');
 }
 
 void game_loop()
@@ -173,7 +168,9 @@ void game_loop()
 	printf("Nospiediet '%c', lai sāktu spēli!\n", 'b');
 
 	bash_set_window_size(client_config.width, client_config.height);
+	bash_hide_cursor();
 
+	memset(field, DEFAULT_BLANK_CHAR, sizeof(field));
 	do {
 		if ((resp_len = recvfrom(sender, msg, MAX_MESSAGE_SIZE, 0,
 			(struct sockaddr *) &client_config.addr, &slen)) == -1) {

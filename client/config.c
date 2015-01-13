@@ -29,7 +29,7 @@ void parse_config()
 
 	if (g_key_file_load_from_file(key_file, "server.ini",
 		G_KEY_FILE_NONE, NULL) != TRUE) {
-		infof("Could not open server.ini file! Using default configuration");
+		debugf("Could not open server.ini file! Using default configuration");
 		goto out;
 	}
 
