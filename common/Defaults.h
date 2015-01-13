@@ -1,6 +1,7 @@
 /*
  * File:   Defaults.h
  * Author: arseniuss
+	   Ilze Dzene-Vanaga
  *
  */
 
@@ -14,6 +15,8 @@
 #define MAX_GAME_HEIGHT			80
 #define MAX_SNAKE_LENGTH		256
 #define MAX_FOOD_AMOUNT			4
+#define MAX_SNAKE_INITIAL_SIZE		6
+#define MAX_SCORE_LIMIT			15
 
 #define DEFAULT_GAME_WIDTH		80
 #define DEFAULT_GAME_HEIGHT		20
