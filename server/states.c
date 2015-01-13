@@ -152,12 +152,21 @@ void clear_game()
 void end_game(int i)
 {
 	game_state = STATE_INITIAL;
+	int c;
 	if (i == -1) {
 		infof("Game has ended with no winners");
-		send_end_message(&players[0].addr, ' ');
+		for (c = 0; c < server_config.max_players; c++) {
+			if (players[c].state != 0) {
+				send_end_message(&players[c].addr, ' ');
+			}
+		}
 	} else {
 		infof("Game has ended. Player %c has won!", players[i].id);
-		send_end_message(&players[0].addr, players[i].id);
+		for (c = 0; c < server_config.max_players; c++) {
+			if (players[c].state != 0) {
+				send_end_message(&players[c].addr, players[i].id);
+			}
+		}
 	}
 }
 
