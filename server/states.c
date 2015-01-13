@@ -153,7 +153,7 @@ void end_game(int i)
 {
 	game_state = STATE_INITIAL;
 	int c;
-	if (i == -1) {
+	if (i == -1 || i > server_config.max_players - 1) {
 		infof("Game has ended with no winners");
 		for (c = 0; c < server_config.max_players; c++) {
 			if (players[c].state != 0) {
@@ -284,7 +284,7 @@ void move_all()
 				got_food[i] = 'N';
 				players[i].points++;
 				if (players[i].points >= game_config.score_limit) {
-
+					end_game(i);
 				}
 			} else {
 				snakes[i].tail_idx = get_new_tail_idx(i);
@@ -501,5 +501,4 @@ void send_end_message(struct sockaddr_in *addr, unsigned char id)
 	size_t len = create_end_message(message, id);
 	send_message(addr, len, message);
 }
-
 
