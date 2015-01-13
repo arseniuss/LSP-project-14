@@ -37,7 +37,18 @@ struct Player {
 
 	unsigned char id;
 	char username[MAX_USERNAME_LEN];
-	int state; //0 - left, 1 - active, 2 - dead
+	unsigned char state; //0 - left, 1 - active, 2 - dead
+	unsigned char points;
+};
+
+struct Snake {
+	struct Point points[MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE + 1];
+	char string[MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE + 1];
+	unsigned char state; //0 - dead, 1 - active, 2 - is dying	
+	unsigned char size;
+	unsigned char head_idx;
+	unsigned char tail_idx;
+	char dir;	
 };
 
 #endif	/* STRUCTURES_H */
