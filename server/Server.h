@@ -10,6 +10,7 @@
 
 #include "../common/Structures.h"
 #include "../common/config.h"
+#include "../common/Messages.h"
 
 void parse_config();
 int main_loop();
