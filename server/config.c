@@ -22,7 +22,7 @@ struct Game game_config;
 
 GKeyFile *key_file;
 
-char *player_ids = "~!@#$%^&*()_+`1234567890-=";
+unsigned char player_ids[26] = "~!@#$%^&*()_+`1234567890-=";
 
 void shuffle_ids()
 {
@@ -30,8 +30,8 @@ void shuffle_ids()
 	unsigned char c;
 	srand(time(NULL));
 
-	for (i = 0; i < strlen(player_ids); ++i) {
-		j = rand() % strlen(player_ids);
+	for (i = 0; i < strlen((char *)player_ids); i++) {
+		j = rand() % strlen((char *)player_ids);
 		c = player_ids[i];
 		player_ids[i] = player_ids[j];
 		player_ids[j] = c;
@@ -44,7 +44,7 @@ char random_player_id()
 
 	if (next < 0)
 		next = 0;
-	if (next > strlen(player_ids))
+	if (next > strlen((char *)player_ids))
 		next = 0;
 
 	return player_ids[next++];
