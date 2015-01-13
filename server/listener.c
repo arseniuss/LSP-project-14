@@ -89,7 +89,7 @@ void handle_register_message(const char *msg, struct sockaddr_in *addr)
 
 			infof("User '%s' from %s saved as player no. %d with ID '%c'",
 				players[i].username, inet_ntoa(players[i].addr.sin_addr),
-				0, players[i].id);
+				i, players[i].id);
 
 			len = create_yes_message(send_buffer, players[i].id);
 			send_message(addr, len, send_buffer);
