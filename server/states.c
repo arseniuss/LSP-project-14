@@ -432,17 +432,19 @@ int count_active_players()
 int get_player_string(int i, char * buffer)
 {
 	int code_len;
+	int k = 3;
 	buffer[0] = players[i].id;
-	buffer[1] = (unsigned char) (snakes[i].points[snakes[i].head_idx].x - 1);
-	buffer[2] = (unsigned char) (snakes[i].points[snakes[i].head_idx].y - 1);
-	buffer[3] = (unsigned char) (snakes[i].size - 1);
+	buffer[1] = (unsigned char)(snakes[i].points[snakes[i].head_idx].x - 1);
+	buffer[2] = (unsigned char)(snakes[i].points[snakes[i].head_idx].y - 1);
 #ifdef CONFIG_COMPRESSED_STATE
-	code_len = get_snake_coded(i, &buffer[4]);
-#else
-	code_len = get_snake_original(i, &buffer[4]);
-#endif
-	buffer[4 + code_len] = '\0';
-	return code_len + 5;
+	buffer[k] = (unsigned char)(snakes[i].size - 1);
+	k++;
+	code_len = get_snake_coded(i, &buffer[k]);
+#else	
+	code_len = get_snake_original(i, &buffer[k]);
+#endif		
+	buffer[k+code_len] = '\0';
+	return code_len + k + 1;
 }
 
 int get_snake_original(int i, char * buffer)
@@ -481,7 +483,6 @@ void send_end_message(struct sockaddr_in *addr, unsigned char id)
 	size_t len = create_end_message(message, id);
 	send_message(addr, len, message);
 }
-
 
 
 
