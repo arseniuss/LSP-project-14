@@ -122,13 +122,13 @@ void start_game()
 		field[0][y] = 'B';
 		field[game_config.field_height + 1][y] = 'B';
 	}
-	for (x = 0; x < game_config.field_height + 2; x++) {
+	for (x = 1; x < game_config.field_height + 2; x++) {
 		field[x][0] = 'B';
 		for (y = 1; y < game_config.field_width + 1; y++) {
 			field[x][y] = ' ';
 		}
 		field[x][game_config.field_width + 1] = 'B';
-	}
+	}	
 
 	//āboli
 	srand(time(NULL));
@@ -143,15 +143,20 @@ void clear_game()
 	for (i = 0; i < server_config.max_players; i++) {
 		snakes[i].state = 0;
 		players[i].points = 0;
+		if (players[i].state == 2) {
+			players[i].state = 1;
+		}
 	}
 }
 
 void end_game(int i)
-{
+{	
 	game_state = STATE_INITIAL;
 	if (i == -1) {
+		infof("Game has ended with no winners");		
 		send_end_message(&players[0].addr, ' ');
 	} else {
+		infof("Game has ended. Player %c has won!", players[i].id);		
 		send_end_message(&players[0].addr, players[i].id);
 	}
 }
@@ -202,7 +207,6 @@ void remove_player(int i)
 void player_move(int i, char m)
 {
 	moves[i] = m;
-	infof("player move: %c\n", m);
 }
 
 void move_all()
@@ -299,6 +303,7 @@ void move_all()
 			}
 			snakes[i].state = 0;
 			players[i].state = 2;
+			infof("Players %c snake is dead!", players[i].id);
 			send_dead_message(&players[i].addr);
 		}
 	}
