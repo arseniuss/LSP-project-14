@@ -49,7 +49,7 @@ void listener_thread_function()
 			handle_message(msg, nbytes, &cli_addr);
 		}
 
-		send_messages();
+		//send_messages();
 	}
 
 	close(listener);
@@ -75,7 +75,7 @@ void handle_register_message(const char *msg, struct sockaddr_in *addr)
 
 	for (i = 0; i < server_config.max_players; ++i) {
 		if (!strcmp(players[i].username, &msg[2])) {
-			debugf("User '%s' already exists!\n", players[i].username);
+			infof("User '%s' already exists!\n", players[i].username);
 			send_no_message(addr);
 			return;
 		}		
@@ -84,6 +84,7 @@ void handle_register_message(const char *msg, struct sockaddr_in *addr)
 			memcpy(&players[i].addr, addr, sizeof(*addr));
 			strncpy(players[i].username, &msg[2], MAX_USERNAME_LEN);
 			players[i].state = 1;
+			players[i].points = 0;
 
 			infof("User '%s' from %s saved as player no. %d with ID '%c'",
 				players[i].username, inet_ntoa(players[i].addr.sin_addr),
@@ -139,6 +140,10 @@ void handle_message(const char *msg, size_t len, struct sockaddr_in *addr)
 					game_state = STATE_GAME;
 				}
 			}
+			else
+			{
+				infof("Incorrect player!");
+			}
 		}
 		break;
 	case 'l':
@@ -157,7 +162,10 @@ void handle_message(const char *msg, size_t len, struct sockaddr_in *addr)
 			int i = get_player_from_addr_id(addr, msg[4]);
 			if (i != -1 && is_valid_move(msg[2]))
 			{
-				player_move(i, msg[2]);
+				if (game_state == STATE_GAME)
+				{				
+					player_move(i, msg[2]);
+				}
 			}
 		}
 	}
@@ -181,7 +189,7 @@ int get_player_from_addr_id(struct sockaddr_in *addr, unsigned char id)
 	return -1;
 }
 
-int is_valid_move(unsigned char m)
+int is_valid_move(char m)
 {
 	if (m == 'u' || m == 'd' || m == 'l' || m == 'r')
 	{
