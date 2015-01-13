@@ -161,8 +161,7 @@ void end_game()
 		if (players[i].state == 1) count++;
 	}
 	if (count == 0)
-	{
-		printf("Send end message\n");		
+	{	
 		send_end_message(&players[0].addr, players[0].id);
 	}
 }
@@ -175,8 +174,6 @@ void get_random_food(int i)
 	if (field[rx][ry] == ' ')
 	{		
 		food[i].x = (unsigned char)rx;
-		printf("esma x: %d\n", rx); 
-		printf("esma y: %d\n", ry);
 		food[i].y = (unsigned char)ry;		
 		field[food[i].x][food[i].y] = 'A';
 	}
@@ -243,8 +240,7 @@ void move_all()
 
 	//Ja vairs nav spēlētāju spēlē
 	if (count == 0)
-	{
-		printf("beidzam!\n");		
+	{		
 		end_game();
 		return;
 	}
@@ -258,7 +254,6 @@ void move_all()
 			field[new_head[i].x][new_head[i].y] = 'H';
 			field[snakes[i].points[snakes[i].head_idx].x][snakes[i].points[snakes[i].head_idx].y] = 'T';
 			snakes[i].head_idx = get_new_head_idx(i);
-			printf("New head idx: %c\n", snakes[i].head_idx + '0');
 			snakes[i].points[snakes[i].head_idx].x = new_head[i].x;
 			snakes[i].points[snakes[i].head_idx].y = new_head[i].y;
 			snakes[i].string[snakes[i].head_idx] = get_opposite_dir(i);
@@ -305,8 +300,7 @@ void move_all()
 	for (i = 0; i < game_config.food_amount; i++)
 	{
 		if (field[food[i].x][food[i].y] != (unsigned char)'A')	
-		{
-			printf("Field is: %c\n", field[food[i].x][food[i].y]);			
+		{		
 			get_random_food(i);
 		}
 	}
@@ -343,8 +337,7 @@ char get_opposite_dir(int i)
 		case 'r' :
 			return 'l';
 			break;
-		default :
-			printf("Not where it should be!\n");			
+		default :		
 			return ' ';
 	}
 }
@@ -377,11 +370,11 @@ int get_new_head_idx(int i)
 {
 	if (snakes[i].head_idx == 0)
 	{
-		return MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE;
+		return (MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE);
 	}
 	else
 	{
-		return snakes[i].head_idx - 1;
+		return (snakes[i].head_idx - 1);
 	}
 }
 
@@ -389,11 +382,11 @@ int get_new_tail_idx(int i)
 {
 	if (snakes[i].tail_idx == 0)
 	{
-		return MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE;
+		return (MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE);
 	}
 	else
 	{
-		return snakes[i].tail_idx - 1;
+		return (snakes[i].tail_idx - 1);
 	}
 }
 
@@ -466,7 +459,6 @@ int get_player_string(int i, char * buffer)
 int get_snake_coded(int i, char * buffer)
 {
 	int len_orig = get_snake_original(i, orig_message);
-	printf("original: %s\n", orig_message);
 	int buffer_idx = 0;	
 	int k = 0;
 	char c;
@@ -486,7 +478,6 @@ int get_snake_coded(int i, char * buffer)
 		buffer_idx += 2;
 	}
 	buffer[buffer_idx] = '\0';
-	printf("coded: %s\n", buffer);
 	return buffer_idx;
 }
 
@@ -496,7 +487,7 @@ int get_snake_original(int i, char * buffer)
 	int c;
 	if (snakes[i].head_idx < snakes[i].tail_idx)
 	{
-		for (c = snakes[i].head_idx; c < snakes[i].tail_idx; i++)
+		for (c = snakes[i].head_idx; c < snakes[i].tail_idx; c++)
 		{		
 			buffer[k] = snakes[i].string[c];
 			k++;
@@ -508,6 +499,8 @@ int get_snake_original(int i, char * buffer)
 		{
 			buffer[k] = snakes[i].string[c];
 			k++;
+			
+			
 		}
 		for (c = 0; c < snakes[i].tail_idx; c++)
 		{
