@@ -66,7 +66,7 @@ void bash_restore_cursor_pos()
 
 void bash_set_window_size(int x, int y)
 {
-	printf("\033[8;%d;%dt", y + 1, x + 1);
+	printf("\033[8;%d;%dt", y + 4, x + 1);
 }
 
 void bash_hide_cursor()

@@ -163,6 +163,8 @@
       </item>
       <item path="common/messages.c" ex="false" tool="0" flavor2="2">
       </item>
+      <item path="server/states.c" ex="false" tool="0" flavor2="0">
+      </item>
     </conf>
     <conf name="Client_Debug" type="0">
       <toolsSet>

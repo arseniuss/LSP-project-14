@@ -148,7 +148,7 @@ void send_player_action(int input)
 void game_draw()
 {
 	int i, j;
-
+#ifndef DEBUG
 	//bash_clear_screen();
 	bash_position_cursor(0, 0);
 	for (i = 0; i < client_config.height; ++i) {
@@ -158,6 +158,7 @@ void game_draw()
 		putchar('\n');
 	}
 	putchar('\n');
+#endif
 }
 
 void game_loop()
