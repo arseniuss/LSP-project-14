@@ -25,7 +25,7 @@ char moves[MAX_PLAYER_COUNT];
 char got_food[MAX_PLAYER_COUNT];
 struct Point new_head[MAX_PLAYER_COUNT];
 struct Point food[MAX_FOOD_AMOUNT];
-char field[MAX_GAME_HEIGHT + 2][MAX_GAME_WIDTH + 2];
+char field[MAX_GAME_WIDTH + 2][MAX_GAME_HEIGHT + 2];
 int array_size;
 char message[MAX_MESSAGE_SIZE];
 char orig_message[MAX_MESSAGE_SIZE];
@@ -69,8 +69,8 @@ void start_game()
 		snakes[1].dir = STATE_MSG_DOWN_CHAR;
 		moves[1] = STATE_MSG_DOWN_CHAR;
 		for (i = 0; i < snakes[1].size; i++) {
-			snakes[1].points[i].x = snakes[0].size - i;
-			snakes[1].points[i].y = game_config.field_width;
+			snakes[1].points[i].y = snakes[0].size - i;
+			snakes[1].points[i].x = game_config.field_width;
 			snakes[1].string[i] = STATE_MSG_UP_CHAR;
 		}
 	} else {
@@ -85,8 +85,8 @@ void start_game()
 		snakes[2].dir = STATE_MSG_LEFT_CHAR;
 		moves[2] = STATE_MSG_LEFT_CHAR;
 		for (i = 0; i < snakes[2].size; i++) {
-			snakes[2].points[i].x = game_config.field_height;
-			snakes[2].points[i].y = game_config.field_width + snakes[0].size - i;
+			snakes[2].points[i].y = game_config.field_height;
+			snakes[2].points[i].x = game_config.field_width + snakes[0].size - i;
 			snakes[2].string[i] = STATE_MSG_RIGHT_CHAR;
 		}
 	} else {
@@ -101,8 +101,8 @@ void start_game()
 		snakes[3].dir = STATE_MSG_UP_CHAR;
 		moves[3] = STATE_MSG_UP_CHAR;
 		for (i = 0; i < snakes[3].size; i++) {
-			snakes[3].points[i].x = game_config.field_height + snakes[0].size - i;
-			snakes[3].points[i].y = 1;
+			snakes[3].points[i].y = game_config.field_height + snakes[0].size - i;
+			snakes[3].points[i].x = 1;
 			snakes[3].string[i] = STATE_MSG_DOWN_CHAR;
 		}
 	} else {
@@ -118,16 +118,16 @@ void start_game()
 
 	//iezīmē laukuma robežas, aizpilda laukumu ar space simboliem
 	int x, y;
-	for (y = 0; y < game_config.field_width + 2; y++) {
-		field[0][y] = 'B';
-		field[game_config.field_height + 1][y] = 'B';
-	}
-	for (x = 1; x < game_config.field_height + 2; x++) {
+	for (x = 0; x < game_config.field_width + 2; x++) {
 		field[x][0] = 'B';
-		for (y = 1; y < game_config.field_width + 1; y++) {
+		field[x][game_config.field_height + 1] = 'B';
+	}
+	for (y = 1; y < game_config.field_height + 2; y++) {
+		field[0][y] = 'B';
+		for (x = 1; x < game_config.field_width + 1; x++) {
 			field[x][y] = ' ';
 		}
-		field[x][game_config.field_width + 1] = 'B';
+		field[game_config.field_width + 1][y] = 'B';
 	}
 
 	//āboli
@@ -190,8 +190,8 @@ void end_game_time_limit()
 void get_random_food(int i)
 {
 	int rx, ry;
-	rx = (rand() % game_config.field_height - 1) + 1;
-	ry = (rand() % game_config.field_width - 1) + 1;
+	rx = (rand() % game_config.field_width - 1) + 1;
+	ry = (rand() % game_config.field_height - 1) + 1;
 	if (field[rx][ry] == ' ') {
 		food[i].x = (unsigned char) rx;
 		food[i].y = (unsigned char) ry;
@@ -244,10 +244,10 @@ void move_all()
 			break;
 		case 'P':
 			snakes[i].state = 2;
+			field[new_head[i].x][new_head[i].y] = 'D'; //otra čūska izbeigsies nākamajā daļā
 			break;
-		case STATE_MSG_DOWN_CHAR:
+		case 'D':
 			snakes[i].state = 2;
-			field[new_head[i].x][new_head[i].y] = STATE_MSG_DOWN_CHAR; //otra čūska izbeigsies nākamajā daļā
 			break;
 		case ' ':
 			field[new_head[i].x][new_head[i].y] = 'P';
@@ -258,7 +258,7 @@ void move_all()
 	//Ja palicis viens (multiplayer) vai vairs nav spēlētāju (singleplayer)
 	if (multiplayer_game == 1 && count < 2) {
 		for (i = 0; i < server_config.max_players; i++) {
-			if (players[i].state != 1) break;
+			if (snakes[i].state != 1) break;
 		}
 		end_game(i);
 		return;
@@ -301,11 +301,18 @@ void move_all()
 	for (i = 0; i < server_config.max_players; i++) {
 		if (snakes[i].state == 2) {
 			int d;
-			for (d = snakes[i].head_idx; d <= snakes[i].tail_idx; d++) {
-				if (d > MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE) {
-					d = 0;
+			if (snakes[i].head_idx < snakes[i].tail_idx) {
+				for (d = snakes[i].head_idx; d <= snakes[i].tail_idx; d++) {
+					field[snakes[i].points[d].x][snakes[i].points[d].y] = ' ';
+				}	
+			}
+			else {
+				for (d = snakes[i].head_idx; d <=MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE; d++) {
+					field[snakes[i].points[d].x][snakes[i].points[d].y] = ' ';
 				}
-				field[snakes[i].points[d].x][snakes[i].points[d].y] = ' ';
+				for (d = 0; d <=snakes[i].tail_idx; d++) {
+					field[snakes[i].points[d].x][snakes[i].points[d].y] = ' ';
+				}
 			}
 			snakes[i].state = 0;
 			players[i].state = 2;
@@ -358,20 +365,20 @@ char get_opposite_dir(int i)
 void get_new_head(int i)
 {
 	if (snakes[i].dir == STATE_MSG_UP_CHAR) {
-		new_head[i].x = snakes[i].points[snakes[i].head_idx].y - 1;
-		new_head[i].y = snakes[i].points[snakes[i].head_idx].x;
+		new_head[i].y = snakes[i].points[snakes[i].head_idx].y - 1;
+		new_head[i].x = snakes[i].points[snakes[i].head_idx].x;
 	}
 	if (snakes[i].dir == STATE_MSG_DOWN_CHAR) {
-		new_head[i].x = snakes[i].points[snakes[i].head_idx].y + 1;
-		new_head[i].y = snakes[i].points[snakes[i].head_idx].x;
+		new_head[i].y = snakes[i].points[snakes[i].head_idx].y + 1;
+		new_head[i].x = snakes[i].points[snakes[i].head_idx].x;
 	}
 	if (snakes[i].dir == STATE_MSG_LEFT_CHAR) {
-		new_head[i].x = snakes[i].points[snakes[i].head_idx].y;
-		new_head[i].y = snakes[i].points[snakes[i].head_idx].x - 1;
+		new_head[i].y = snakes[i].points[snakes[i].head_idx].y;
+		new_head[i].x = snakes[i].points[snakes[i].head_idx].x - 1;
 	}
 	if (snakes[i].dir == STATE_MSG_RIGHT_CHAR) {
-		new_head[i].x = snakes[i].points[snakes[i].head_idx].y;
-		new_head[i].y = snakes[i].points[snakes[i].head_idx].x + 1;
+		new_head[i].y = snakes[i].points[snakes[i].head_idx].y;
+		new_head[i].x = snakes[i].points[snakes[i].head_idx].x + 1;
 	}
 }
 
@@ -494,6 +501,5 @@ void send_end_message(struct sockaddr_in *addr, unsigned char id)
 	size_t len = create_end_message(message, id);
 	send_message(addr, len, message);
 }
-
 
 
