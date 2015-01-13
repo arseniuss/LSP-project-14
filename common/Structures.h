@@ -25,12 +25,36 @@ struct Game {
 	unsigned char score_limit; /* 5 - 15 points */
 };
 
+/**
+ * Server configuration, used in server
+ */
 struct Server {
 	char *server_ip;
 	int port_no;
 	unsigned char max_players; /* 1- 4 */
 };
 
+/**
+ * Client configuration, used in client
+ */
+struct Client {
+	unsigned char id;
+	unsigned char state; //0 - left, 1 - active, 2 - dead
+	char username[MAX_USERNAME_LEN];
+
+
+	int width;
+	int height;
+
+	int sockfd;
+	char *server_ip;
+	int port_no;
+	struct sockaddr_in addr;
+};
+
+/**
+ * Player description, used in server
+ */
 struct Player {
 	int sockfd;
 	struct sockaddr_in addr;

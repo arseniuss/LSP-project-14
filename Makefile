@@ -28,7 +28,11 @@ COMMON_SRC = \
 
 # List of source files for client
 CLIENT_SRC = \
-    client/main.c
+    client/config.c \
+    client/game.c \
+    client/graphics.c \
+    client/main.c \
+    client/messages.c
 
 # List of source files for server
 SERVER_SRC = \

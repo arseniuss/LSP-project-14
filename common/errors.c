@@ -7,9 +7,22 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
-void error(const char *msg)
+#include "../common/Defs.h"
+
+void error(const char *msg, ...)
 {
-	perror(msg);
+	char buf[BUFSIZ];
+	va_list args;
+
+	va_start(args, msg);
+
+	vsnprintf(buf, BUFSIZ, msg, args);
+
+	va_end(args);
+
+	perror(buf);
+
 	exit(1);
 }

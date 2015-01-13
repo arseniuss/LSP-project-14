@@ -15,26 +15,13 @@
 
 #include "Server.h"
 
-void parse_message(size_t len, char *msg)
-{
-	size_t i;
-	for (i = 0; i < len; ++i)
-	{
-		if (msg[i] == '\r')
-		{
-			msg[i] = '\0';
-		}
-	}
-}
-
 size_t create_yes_message(char *msg, unsigned char id)
 {
 	size_t len;
 
-	len = sprintf(msg, "a\ry\r%c\r%d\r%d", id, game_config.field_width,
+	len = sprintf(msg, "a\ry\r%c\r%d\r%d\r", id, game_config.field_width,
 		game_config.field_height);
-
-	parse_message(len, msg);
+	correct_message(msg);
 
 	return len;
 }
@@ -43,7 +30,8 @@ size_t create_no_message(char *msg)
 {
 	size_t len;
 
-	len = sprintf(msg, "a\rn");
+	len = sprintf(msg, "a\rn\r");
+	correct_message(msg);
 
 	return len;
 }
@@ -52,9 +40,8 @@ size_t create_end_message(char *msg, unsigned char id)
 {
 	size_t len;
 
-	len = sprintf(msg, "e\r%c", id);
-
-	parse_message(len, msg);
+	len = sprintf(msg, "e\r%c\r", id);
+	correct_message(msg);
 
 	return len;
 }
@@ -63,7 +50,8 @@ size_t create_dead_message(char *msg)
 {
 	size_t len;
 
-	len = sprintf(msg, "d");
+	len = sprintf(msg, "d\r");
+	correct_message(msg);
 
 	return len;
 }

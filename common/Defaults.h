@@ -12,6 +12,8 @@
 #define MAX_USERNAME_LEN		15
 #define MAX_GAME_WIDTH			120
 #define MAX_GAME_HEIGHT			80
+#define MAX_SNAKE_LENGTH		256
+#define MAX_FOOD_AMOUNT			4
 
 #define DEFAULT_GAME_WIDTH		80
 #define DEFAULT_GAME_HEIGHT		20
@@ -25,5 +27,12 @@
 
 #define DEFAULT_SERVER_ADDRESS		"127.0.0.1"
 #define DEFAULT_SERVER_PORT_NO		65342
+
+#define DEFAULT_TRIES			5
+#define DEFAULT_SLEEP			1 /* second */
+
+#define PLAYER_STATE_ACTIVE		0
+#define PLAYER_STATE_DEAD		1
+#define PLAYER_STATE_LEFT		2
 
 #endif	/* DEFAULTS_H */

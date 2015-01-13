@@ -9,11 +9,11 @@
 
 #include "Defs.h"
 
-void message_send(int fd, const char *msg)
+void correct_message(char *msg)
 {
-	int n;
+	int i;
 
-	n = write(fd, msg, strlen(msg));
-	if (n < 0)
-		error("ERROR in message sending");
+	for (i = 0; i < strlen(msg); ++i)
+		if (msg[i] == '\r')
+			msg[i] = '\0';
 }

@@ -25,10 +25,10 @@
 						fprintf(stdout, "\n");\
 					} while (0)
 
-void error(const char *msg);
+#define stringify(x)	#x
+#define xstringify(x)	stringify(x)
 
-/* Messages */
-void message_send(int fd, const char *msg);
+void error(const char *msg, ...);
 
 #endif	/* DEFS_H */
 
