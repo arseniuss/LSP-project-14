@@ -14,7 +14,6 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <stdbool.h>
-#include <termios.h>
 
 #include "Client.h"
 #include "../common/Defs.h"
@@ -94,16 +93,21 @@ int connect_to_server()
 	}
 
 	if (resp == 0) {
-		printf(" aizņemts!");
+		printf(" aizņemts!\n");
 		ret = 0;
 	} else {
-		printf(" pieslēdzies!");
+		printf(" pieslēdzies!\n");
 		ret = 1;
 	}
 
 	fflush(stdout);
 
 	return ret;
+}
+
+void disconnect_from_server()
+{
+	close(sender);
 }
 
 void send_player_input(int input)
@@ -161,13 +165,6 @@ void game_loop()
 {
 	int player_input;
 	socklen_t slen = sizeof(client_config.addr);
-	struct termios ttystate;
-
-	tcgetattr(STDIN_FILENO, &ttystate);
-	ttystate.c_lflag &= ~(ICANON | ECHO);
-	ttystate.c_cc[VMIN] = 0;
-	ttystate.c_cc[VTIME] = 5;
-	tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
 
 	bash_set_window_size(client_config.width, client_config.height);
 
@@ -183,8 +180,6 @@ void game_loop()
 		}
 
 		if ((player_input = fgetc(stdin)) != EOF) {
-			debugf("Sending player input %c\n", player_input);
-
 			send_player_input(player_input);
 
 			switch (player_input) {
@@ -196,6 +191,11 @@ void game_loop()
 
 		}
 
-		//game_draw();
-	} while (client_config.state == PLAYER_STATE_ACTIVE);
+		/* Draw only when in game */
+		if (client_config.state == PLAYER_STATE_ACTIVE)
+			game_draw();
+	} while (client_config.state < PLAYER_STATE_DEAD);
+
+	/* Clear client ID */
+	client_config.id = '\0';
 }

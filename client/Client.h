@@ -16,6 +16,7 @@ extern struct Point food[MAX_FOOD_AMOUNT];
 
 void parse_config();
 int connect_to_server();
+void disconnect_from_server();
 void game_loop();
 
 /* Messages */

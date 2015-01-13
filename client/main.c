@@ -11,11 +11,14 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
+#include <termios.h>
 
 #include "Client.h"
 #include "../common/Defaults.h"
 #include "../common/Defs.h"
 #include "../common/Structures.h"
+
+struct termios ttystate, ttysave;
 
 void show_title()
 {
@@ -93,13 +96,61 @@ void input_username()
 	printf("Lietotājvārds: %s pieņemts\n", client_config.username);
 }
 
+int repeat_game()
+{
+	int i;
+
+	do {
+		printf("Vai atkārtot spēli? J/N ");
+
+		while ((i = getchar()) == EOF);
+		putchar(i);
+
+	} while (i != 'j' && i != 'n' && i != 'J' && i != 'N');
+
+	printf("\n");
+
+	return i == 'j' || i == 'J' ? 1 : 0;
+}
+
+void setup_char_input()
+{
+
+	/* Set non-blocking and non-waiting state for stdin */
+	tcgetattr(STDIN_FILENO, &ttystate);
+
+	memcpy(&ttysave, &ttystate, sizeof(struct termios));
+
+	ttystate.c_lflag &= ~(ICANON | ECHO);
+	ttystate.c_cc[VMIN] = 0;
+	ttystate.c_cc[VTIME] = 5;
+
+	tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
+}
+
+void unset_char_input()
+{
+
+	/* Restore old stdin settings */
+	tcsetattr(STDIN_FILENO, TCSANOW, &ttysave);
+}
+
 int main(int argc, char** argv)
 {
 	parse_config();
 	show_title();
 	input_username();
-	if (connect_to_server())
-		game_loop();
+
+	setup_char_input();
+	do {
+		if (connect_to_server())
+			game_loop();
+		disconnect_from_server();
+
+		if (!repeat_game())
+			break;
+	} while (1);
+	unset_char_input();
 
 	return 0;
 }

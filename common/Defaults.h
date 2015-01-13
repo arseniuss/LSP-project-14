@@ -34,8 +34,10 @@
 #define DEFAULT_TRIES			5
 #define DEFAULT_SLEEP			1 /* second */
 
-#define PLAYER_STATE_ACTIVE		0
-#define PLAYER_STATE_DEAD		1
-#define PLAYER_STATE_LEFT		2
+#define PLAYER_STATE_INITIAL		0
+#define PLAYER_STATE_ACTIVE		1
+/* States below PLAYER_STATE_DEAD should be in- and pre- game states */
+#define PLAYER_STATE_DEAD		2
+#define PLAYER_STATE_LEFT		3
 
 #endif	/* DEFAULTS_H */
