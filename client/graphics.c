@@ -13,7 +13,6 @@
 
 unsigned char foreground[] = {
 	[DEFAULT_COLOR] = 39,
-	[BLACK_COLOR] = 30,
 	[RED_COLOR] = 31,
 	[GREEN_COLOR] = 32,
 	[YELLOW_COLOR] = 33,
@@ -24,7 +23,6 @@ unsigned char foreground[] = {
 
 unsigned char background[] = {
 	[DEFAULT_COLOR] = 49,
-	[BLACK_COLOR] = 40,
 	[RED_COLOR] = 41,
 	[GREEN_COLOR] = 42,
 	[YELLOW_COLOR] = 43,
@@ -66,7 +64,7 @@ void bash_restore_cursor_pos()
 
 void bash_set_window_size(int x, int y)
 {
-	printf("\033[8;%d;%dt", y + 4, x + 1);
+	printf("\033[8;%d;%dt", y + 2, x + 2);
 }
 
 void bash_hide_cursor()

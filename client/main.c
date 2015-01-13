@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <termios.h>
+#include <signal.h>
 
 #include "Client.h"
 #include "../common/Defaults.h"
@@ -104,11 +105,11 @@ int repeat_game()
 		printf("Vai atkārtot spēli? J/N ");
 
 		while ((i = getchar()) == EOF);
-		putchar(i);
+		printf("%c\n", i);
 
 	} while (i != 'j' && i != 'n' && i != 'J' && i != 'N');
 
-	printf("\n");
+
 
 	return i == 'j' || i == 'J' ? 1 : 0;
 }
@@ -135,18 +136,29 @@ void unset_char_input()
 	tcsetattr(STDIN_FILENO, TCSANOW, &ttysave);
 }
 
+void exit_signal(int i)
+{
+	if (client_config.sockfd) {
+		send_player_action('Q');
+		disconnect_from_server();
+	}
+	exit(0);
+}
+
 int main(int argc, char** argv)
 {
 	parse_config();
 	show_title();
 	input_username();
 
+	signal(SIGINT, exit_signal);
 	setup_char_input();
 	if (register_into_server())
 		do {
 			game_loop();
 
 			if (!repeat_game()) {
+				send_player_action('Q');
 				break;
 			}
 		} while (1);

@@ -4,9 +4,7 @@
 #include "../common/Structures.h"
 
 extern struct Client client_config;
-
-char field[MAX_GAME_WIDTH*MAX_GAME_HEIGHT];
-
+extern unsigned char field[MAX_GAME_WIDTH*MAX_GAME_HEIGHT];
 void parse_config();
 int register_into_server();
 void disconnect_from_server();
@@ -26,7 +24,6 @@ void send_player_action(int input);
 /* Graphics */
 enum bash_color {
 	DEFAULT_COLOR = 0,
-	BLACK_COLOR,
 	RED_COLOR,
 	GREEN_COLOR,
 	YELLOW_COLOR,

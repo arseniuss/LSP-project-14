@@ -14,6 +14,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "Client.h"
 #include "../common/Defs.h"
@@ -25,7 +26,7 @@ char msg[MAX_MESSAGE_SIZE];
 size_t msg_len;
 ssize_t resp_len;
 
-char field[MAX_GAME_WIDTH * MAX_GAME_HEIGHT];
+unsigned char field[MAX_GAME_WIDTH * MAX_GAME_HEIGHT];
 
 int register_into_server()
 {
@@ -148,12 +149,31 @@ void send_player_action(int input)
 void game_draw()
 {
 	int i, j;
+	unsigned char ch;
 #ifndef DEBUG
 	//bash_clear_screen();
 	bash_position_cursor(0, 0);
 	for (i = 0; i < client_config.height; ++i) {
 		for (j = 0; j < client_config.width; ++j) {
-			putchar(field[j + i * client_config.width]);
+			ch = field[j + i * client_config.width];
+
+			switch (ch) {
+			case ' ':
+				bash_set_color(foreground[DEFAULT_COLOR]);
+				putchar(' ');
+				break;
+			default:
+				if (ch >= 'f') {
+					bash_set_color(foreground[DEFAULT_COLOR + ch - 'f' + 1]);
+					printf("🍒");
+					bash_set_color(foreground[DEFAULT_COLOR]);
+				} else {
+					bash_set_color(foreground[DEFAULT_COLOR + ch + 1]);
+					printf("█");
+					bash_set_color(foreground[DEFAULT_COLOR]);
+				}
+				break;
+			}
 		}
 		putchar('\n');
 	}
@@ -170,6 +190,7 @@ void game_loop()
 
 	bash_set_window_size(client_config.width, client_config.height);
 	bash_hide_cursor();
+	client_config.state = PLAYER_STATE_INITIAL;
 
 	memset(field, DEFAULT_BLANK_CHAR, sizeof(field));
 	do {
@@ -205,10 +226,7 @@ void game_loop()
 		printf("Jūs nomirāt!\n");
 		break;
 	case PLAYER_STATE_END:
-		printf("Spēli uzvarēja '%c' spēlētājs!\n", client_config.winner);
+		printf("Jūs uzvarējāt!\n");
 		break;
 	}
-
-	/* Clear client ID */
-	client_config.id = '\0';
 }

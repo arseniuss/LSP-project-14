@@ -49,6 +49,13 @@
           <buildCommand>${MAKE} all</buildCommand>
           <cleanCommand>${MAKE} clean</cleanCommand>
           <executablePath></executablePath>
+          <cTool>
+            <incDir>
+              <pElem>/usr/include/glib-2.0</pElem>
+              <pElem>/usr/lib/x86_64-linux-gnu/glib-2.0/include</pElem>
+              <pElem>.</pElem>
+            </incDir>
+          </cTool>
         </makeTool>
       </makefileType>
       <item path="client/config.c" ex="false" tool="0" flavor2="0">
@@ -65,15 +72,16 @@
       </item>
       <item path="common/messages.c" ex="false" tool="0" flavor2="2">
       </item>
-      <folder path="0/client">
-        <cTool>
-          <incDir>
-            <pElem>/usr/include/glib-2.0</pElem>
-            <pElem>/usr/lib/x86_64-linux-gnu/glib-2.0/include</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </folder>
+      <item path="server/config.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="server/listener.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="server/main.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="server/messages.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="server/states.c" ex="false" tool="0" flavor2="0">
+      </item>
     </conf>
     <conf name="All_Debug" type="0">
       <toolsSet>
@@ -291,6 +299,11 @@
           <buildCommand>${MAKE}  snake-server DEBUG=1</buildCommand>
           <cleanCommand>${MAKE} clean</cleanCommand>
           <executablePath>snake-server</executablePath>
+          <cTool>
+            <preprocessorList>
+              <Elem>DEBUG=1</Elem>
+            </preprocessorList>
+          </cTool>
         </makeTool>
       </makefileType>
       <item path="client/config.c" ex="false" tool="0" flavor2="2">
@@ -306,19 +319,7 @@
       <item path="common/errors.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="common/messages.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </cTool>
       </item>
-      <folder path="0/client">
-        <cTool>
-          <preprocessorList>
-            <Elem>DEBUG=1</Elem>
-          </preprocessorList>
-        </cTool>
-      </folder>
       <folder path="0/common">
         <cTool>
           <incDir>
@@ -335,9 +336,6 @@
             <pElem>/usr/lib/x86_64-linux-gnu/glib-2.0/include</pElem>
             <pElem>.</pElem>
           </incDir>
-          <preprocessorList>
-            <Elem>DEBUG=1</Elem>
-          </preprocessorList>
         </cTool>
       </folder>
       <item path="server/config.c" ex="false" tool="0" flavor2="0">

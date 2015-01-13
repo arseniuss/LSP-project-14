@@ -27,7 +27,7 @@ void parse_config()
 	client_config.server_ip = DEFAULT_SERVER_ADDRESS;
 	client_config.port_no = DEFAULT_SERVER_PORT_NO;
 
-	if (g_key_file_load_from_file(key_file, "server.ini",
+	if (g_key_file_load_from_file(key_file, "client.ini",
 		G_KEY_FILE_NONE, NULL) != TRUE) {
 		debugf("Could not open server.ini file! Using default configuration");
 		goto out;
