@@ -10,6 +10,7 @@
 
 #include "../common/Structures.h"
 #include "../common/config.h"
+#include "../common/Messages.h"
 
 void parse_config();
 int main_loop();
@@ -57,6 +58,7 @@ void clear_players();
 void start_game();
 void clear_game();
 void end_game(int i);
+void end_game_time_limit();
 void remove_player(int i);
 void player_move(int i, char m);
 void move_all();

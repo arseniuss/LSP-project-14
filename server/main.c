@@ -14,6 +14,7 @@
 #include <netinet/in.h>
 #include <sys/time.h>
 #include <string.h>
+#include <signal.h>
 
 #include "../common/Defs.h"
 #include "Server.h"
@@ -27,7 +28,14 @@ int do_move;
 int main(int argc, char** argv)
 {
 	pthread_t thread_timer;
-	pthread_t thread_listener;	
+	pthread_t thread_listener;
+
+	struct sigaction new_action, old_action;
+
+	new_action.sa_handler = end_game_time_limit;
+	sigaction (SIGALRM, NULL, &old_action);
+  	if (old_action.sa_handler != SIG_IGN)
+    	sigaction (SIGALRM, &new_action, NULL);	
 	
 	parse_config();
 	
@@ -92,4 +100,3 @@ void clear_players()
 		players[i].points = 0;
 	}
 }
-
