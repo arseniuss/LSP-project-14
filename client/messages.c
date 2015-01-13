@@ -80,14 +80,22 @@ void decode_state_message(const char *msg, ssize_t len)
 	int i, j, snake_cnt = msg[1];
 	const char *ptr;
 
-	if (snake_count > MAX_PLAYER_COUNT)
+	if (snake_count > MAX_PLAYER_COUNT) {
+		debugf("Error in max player count");
 		return;
+	}
 
 	ptr = msg + 3;
 	for (i = 0; i <= snake_cnt; i++) {
 		snake[i].id = *ptr++;
 		snake[i].points[0].x = *ptr++;
 		snake[i].points[0].y = *ptr++;
+
+#ifdef DEBUG
+		if (snake[i].points[0].x > client_config.width ||
+			snake[i].points[0].x > client_config.height)
+			debugf("Error in snake no. %d starting points!\n", i);
+#endif
 
 		for (j = 1; *ptr != '\0'; j++, ptr++) {
 			switch (*ptr) {
@@ -107,7 +115,13 @@ void decode_state_message(const char *msg, ssize_t len)
 				snake[i].points[j].x = snake[i].points[j - 1].x - 1;
 				snake[i].points[j].y = snake[i].points[j - 1].y;
 				break;
+			default:
+				debugf("Error in snake coordinates! Got char %c", *ptr);
+				return;
 			}
+
+			debugf("snake [%d, %d] %c\n", snake[i].points[j].x,
+				snake[i].points[j].y, *ptr);
 		}
 		snake[i].len = j - 1;
 		ptr++;

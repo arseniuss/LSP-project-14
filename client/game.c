@@ -144,7 +144,7 @@ void game_draw()
 {
 	int i, j;
 
-	bash_clear_screen();
+	//bash_clear_screen();
 	bash_position_cursor(0, 0);
 	for (i = 0; i < snake_count; ++i) {
 		/* TODO: There is only 8 colors */
@@ -152,7 +152,7 @@ void game_draw()
 
 		for (j = 0; j < snake[i].len; ++j) {
 			bash_position_cursor(snake[i].points[j].x, snake[i].points[j].y);
-			putchar(' ');
+			putchar('#');
 		}
 	}
 }
@@ -166,7 +166,7 @@ void game_loop()
 	tcgetattr(STDIN_FILENO, &ttystate);
 	ttystate.c_lflag &= ~(ICANON | ECHO);
 	ttystate.c_cc[VMIN] = 0;
-	ttystate.c_cc[VTIME] = 0;
+	ttystate.c_cc[VTIME] = 5;
 	tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
 
 	bash_set_window_size(client_config.width, client_config.height);
@@ -196,9 +196,6 @@ void game_loop()
 
 		}
 
-		game_draw();
+		//game_draw();
 	} while (client_config.state == PLAYER_STATE_ACTIVE);
-
-	ttystate.c_lflag |= ICANON | ECHO;
-	tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
 }
