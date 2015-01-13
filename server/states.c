@@ -258,6 +258,7 @@ void move_all()
 			field[new_head[i].x][new_head[i].y] = 'H';
 			field[snakes[i].points[snakes[i].head_idx].x][snakes[i].points[snakes[i].head_idx].y] = 'T';
 			snakes[i].head_idx = get_new_head_idx(i);
+			printf("New head idx: %c\n", snakes[i].head_idx + '0');
 			snakes[i].points[snakes[i].head_idx].x = new_head[i].x;
 			snakes[i].points[snakes[i].head_idx].y = new_head[i].y;
 			snakes[i].string[snakes[i].head_idx] = get_opposite_dir(i);
@@ -336,13 +337,14 @@ char get_opposite_dir(int i)
 		case 'd' :
 			return 'u';
 			break;
-		case 'l' :
+		case 'l' :			
 			return 'r';
 			break;
 		case 'r' :
 			return 'l';
 			break;
 		default :
+			printf("Not where it should be!\n");			
 			return ' ';
 	}
 }
@@ -455,7 +457,7 @@ int get_player_string(int i, char * buffer)
 	buffer[0] = players[i].id;
 	buffer[1] = (unsigned char)(snakes[i].points[snakes[i].head_idx].x - 1);
 	buffer[2] = (unsigned char)(snakes[i].points[snakes[i].head_idx].y - 1);
-	buffer[3] = (unsigned char)(snakes[i].size);
+	buffer[3] = (unsigned char)(snakes[i].size - 1);
 	code_len = get_snake_coded(i, &buffer[4]);
 	buffer[4+code_len] = '\0';
 	return code_len + 5;
@@ -464,6 +466,7 @@ int get_player_string(int i, char * buffer)
 int get_snake_coded(int i, char * buffer)
 {
 	int len_orig = get_snake_original(i, orig_message);
+	printf("original: %s\n", orig_message);
 	int buffer_idx = 0;	
 	int k = 0;
 	char c;
@@ -482,21 +485,35 @@ int get_snake_coded(int i, char * buffer)
 		buffer[buffer_idx+1] = c;
 		buffer_idx += 2;
 	}
+	buffer[buffer_idx] = '\0';
+	printf("coded: %s\n", buffer);
 	return buffer_idx;
 }
 
 int get_snake_original(int i, char * buffer)
 {
 	int k = 0;
-	int c;	
-	for (c = snakes[i].head_idx; c < snakes[i].tail_idx; c++)
+	int c;
+	if (snakes[i].head_idx < snakes[i].tail_idx)
 	{
-		if (c > MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE)
-		{
-			c = 0;
+		for (c = snakes[i].head_idx; c < snakes[i].tail_idx; i++)
+		{		
+			buffer[k] = snakes[i].string[c];
+			k++;
 		}
-		buffer[k] = snakes[i].string[c];
-		k++;
+	}
+	else
+	{
+		for (c = snakes[i].head_idx; c < MAX_SCORE_LIMIT + MAX_SNAKE_INITIAL_SIZE+1; c++)
+		{
+			buffer[k] = snakes[i].string[c];
+			k++;
+		}
+		for (c = 0; c < snakes[i].tail_idx; c++)
+		{
+			buffer[k] = snakes[i].string[c];
+			k++;
+		}
 	}
 	buffer[k] = '\0';
 	return k;
@@ -513,7 +530,6 @@ void send_end_message(struct sockaddr_in *addr, unsigned char id)
 	size_t len = create_end_message(message, id);
 	send_message(addr, len, message);
 }
-
 
 
 
